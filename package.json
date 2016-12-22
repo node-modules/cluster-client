@@ -4,10 +4,10 @@
   "description": "Sharing Connection among Multi-Process Nodejs",
   "main": "./lib/index.js",
   "scripts": {
-    "lint": "eslint --ext .js lib test",
+    "lint": "eslint --ext .js lib test --fix",
     "test": "npm run lint && npm run test-local",
     "test-local": "egg-bin test",
-    "cov": "TEST_TIMEOUT=20000 egg-bin cov",
+    "cov": "egg-bin cov",
     "ci": "npm run lint && npm run cov"
   },
   "repository": {
@@ -48,5 +48,11 @@
     "pedding": "^1.1.0",
     "power-assert": "^1.4.2",
     "supertest": "^2.0.1"
+  },
+  "engines": {
+    "node": ">= 4.0.0"
+  },
+  "ci": {
+    "version": "4, 6, 7"
   }
 }
