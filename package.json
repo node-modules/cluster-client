@@ -4,7 +4,7 @@
   "description": "Sharing Connection among Multi-Process Nodejs",
   "main": "./lib/index.js",
   "scripts": {
-    "lint": "eslint --ext .js lib test --fix",
+    "lint": "eslint --ext .js lib test",
     "test": "npm run lint && npm run test-local",
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
