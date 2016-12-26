@@ -2,8 +2,8 @@
 
 const net = require('net');
 const Base = require('sdk-base');
-const Packet = require('./protocol/packet');
-const Response = require('./protocol/response');
+const Packet = require('../../lib/protocol/packet');
+const Response = require('../../lib/protocol/response');
 
 // share memory in current process
 let serverMap;
