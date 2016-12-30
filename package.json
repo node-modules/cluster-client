@@ -3,6 +3,9 @@
   "version": "1.0.2",
   "description": "Sharing Connection among Multi-Process Nodejs",
   "main": "./lib/index.js",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "lint": "eslint --ext .js lib test",
     "test": "npm run lint && npm run test-local",
@@ -27,16 +30,18 @@
   "dependencies": {
     "byte": "^1.1.5",
     "co": "^4.6.0",
-    "debug": "^2.3.3",
+    "debug": "^2.6.0",
     "harmony-reflect": "^1.5.0",
     "is-type-of": "^1.0.0",
     "json-stringify-safe": "^5.0.1",
     "long": "^3.2.0",
     "sdk-base": "^2.0.1",
     "tcp-base": "^1.1.0",
-    "utility": "^1.9.0"
+    "utility": "^1.9.0",
+    "zlogger": "^1.1.0"
   },
   "devDependencies": {
+    "coffee": "^3.3.0",
     "egg": "^0.5.0",
     "egg-bin": "^1.7.0",
     "egg-ci": "^1.1.0",

@@ -6,7 +6,7 @@ const pedding = require('pedding');
 const assert = require('power-assert');
 const URL = require('url');
 const cluster = require('../');
-const RegistryClient = require('./registry_client');
+const RegistryClient = require('./supports/registry_client');
 const portDelta = Number(process.versions.node.slice(0, 1));
 
 describe('test/index.test.js', () => {
@@ -156,6 +156,10 @@ describe('test/index.test.js', () => {
           });
         });
       }
+
+      timeout(cb) {
+        setTimeout(cb, 6000);
+      }
     }
 
     const port = 6660 + portDelta;
@@ -163,11 +167,13 @@ describe('test/index.test.js', () => {
       .delegate('get')
       .delegate('getCallback')
       .delegate('getPromise')
+      .delegate('timeout')
       .create();
     const follower = cluster(MockClient, { port })
       .delegate('get')
       .delegate('getCallback')
       .delegate('getPromise')
+      .delegate('timeout')
       .create();
 
     it('should invoke generator function ok', function* () {
@@ -235,6 +241,13 @@ describe('test/index.test.js', () => {
         done();
       });
     });
+
+    it('should invoke timeout ok', done => {
+      follower.timeout(err => {
+        assert(err && err.name === 'ResponseTimeoutError');
+        done();
+      });
+    });
   });
 
   describe('event delegate', () => {
@@ -273,10 +286,17 @@ describe('test/index.test.js', () => {
     const port = 5550 + portDelta;
     const transcode = {
       encode(urls) {
-        return new Buffer(JSON.stringify(urls.map(url => url.href)));
+        if (Array.isArray(urls)) {
+          return new Buffer(JSON.stringify(urls.map(url => url.href)));
+        }
+        return new Buffer(JSON.stringify(urls));
       },
       decode(buf) {
-        return JSON.parse(buf).map(url => URL.parse(url, true));
+        const arr = JSON.parse(buf);
+        if (Array.isArray(arr)) {
+          return arr.map(url => URL.parse(url, true));
+        }
+        return arr;
       },
     };
     const leader = cluster(RegistryClient, { port, transcode }).create(4321, '224.5.6.8');
