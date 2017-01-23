@@ -99,9 +99,9 @@ win /   +------------------+  \ lose
 - Sequence diagram
 
 ```js
- +----------+             +---------------+          +---------+ 
+ +----------+             +---------------+          +---------+
  | Follower |             |  local server |          |  Leader |
- +----------+             +---------------+          +---------+ 
+ +----------+             +---------------+          +---------+
       |     register channel     |       assign to        |
       + -----------------------> |  --------------------> |
       |                          |                        |
@@ -181,19 +181,19 @@ const client_3 = cluster(YourClient)
   .delegate('getData')
   .delegate('getDataCallback')
   .delegate('getDataPromise')
-  .create({ foo: 'bar' });;
+  .create({ foo: 'bar' });
 
 // subscribe information
-client_1.subsribe('some thing', result => console.log(result));
-client_2.subsribe('some thing', result => console.log(result));
-client_3.subsribe('some thing', result => console.log(result));
+client_1.subscribe('some thing', result => console.log(result));
+client_2.subscribe('some thing', result => console.log(result));
+client_3.subscribe('some thing', result => console.log(result));
 
 // publish data
 client_2.publish('some data');
 
 // invoke method
 client_3.getDataCallback('some thing', (err, val) => console.log(val));
-client_2.getPromise('some thing').then(val => console.log(val));
+client_2.getDataPromise('some thing').then(val => console.log(val));
 
 co(function*() {
   const ret = yield client_1.getData('some thing');
@@ -204,7 +204,7 @@ co(function*() {
 ## API
 
 - `delegate(from, to)`:
-  create delegate method, `from` is the method name your want to create, and `to` have 3 possible values: subscribe, publish, and invoke, the default value is invoke 
+  create delegate method, `from` is the method name your want to create, and `to` have 3 possible values: subscribe, publish, and invoke, the default value is invoke
 - `override(name, value)`:
   override one property
 - `create(…)`
