@@ -1,4 +1,10 @@
 
+1.0.2 / 2017-01-25
+==================
+
+  * fix: log error if error exist (#5)
+  * docs: fix typo subsribe -> subscribe (#4)
+
 1.0.1 / 2016-12-26
 ==================
 
