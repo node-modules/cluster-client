@@ -50,7 +50,6 @@
     "mm": "^2.0.0",
     "npminstall": "^2.13.3",
     "pedding": "^1.1.0",
-    "power-assert": "^1.4.2",
     "supertest": "^2.0.1"
   },
   "engines": {

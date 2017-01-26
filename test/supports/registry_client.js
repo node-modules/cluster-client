@@ -190,6 +190,15 @@ class RegistryClient extends Base {
     const providerUrl = URL.format(parsed);
     this._broadcast(`subscribe ${providerUrl}`);
   }
+
+  close() {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        this.closed = true;
+        resolve();
+      }, 100);
+    });
+  }
 }
 
 module.exports = RegistryClient;
