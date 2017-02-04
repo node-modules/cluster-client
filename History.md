@@ -1,4 +1,9 @@
 
+1.0.3 / 2017-02-04
+==================
+
+  * fix: adjust serialize algorithm for invoke arguments (#3)
+
 1.0.2 / 2017-01-25
 ==================
 
