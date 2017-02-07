@@ -1,4 +1,11 @@
 
+1.1.0 / 2017-02-07
+==================
+
+  * feat: close (#7)
+  * fix: no more need harmony-reflect on node >= 6 (#8)
+  * refactor: improve utils.delegateEvents() (#6)
+
 1.0.3 / 2017-02-04
 ==================
 
