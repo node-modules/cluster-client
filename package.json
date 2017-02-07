@@ -31,7 +31,6 @@
     "byte": "^1.1.5",
     "co": "^4.6.0",
     "debug": "^2.6.0",
-    "harmony-reflect": "^1.5.0",
     "is-type-of": "^1.0.0",
     "json-stringify-safe": "^5.0.1",
     "long": "^3.2.0",
@@ -55,7 +54,7 @@
     "supertest": "^2.0.1"
   },
   "engines": {
-    "node": ">= 4.0.0"
+    "node": ">= 6.0.0"
   },
   "ci": {
     "version": "6, 7"
