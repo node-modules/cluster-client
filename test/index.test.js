@@ -1,11 +1,13 @@
 'use strict';
 
-const Base = require('sdk-base');
-const is = require('is-type-of');
-const pedding = require('pedding');
-const assert = require('power-assert');
 const URL = require('url');
 const cluster = require('../');
+const is = require('is-type-of');
+const Base = require('sdk-base');
+const assert = require('assert');
+const pedding = require('pedding');
+const serverMap = global.serverMap;
+const symbols = require('../lib/symbol');
 const RegistryClient = require('./supports/registry_client');
 const portDelta = Number(process.versions.node.slice(0, 1));
 
@@ -13,12 +15,24 @@ describe('test/index.test.js', () => {
 
   describe('RegistryClient', () => {
     const port = 8880 + portDelta;
-    const leader = cluster(RegistryClient, { port, isLeader: true })
-      .delegate('subscribe', 'subscribe')
-      .delegate('publish', 'publish')
-      .override('foo', 'bar')
-      .create();
-    const follower = cluster(RegistryClient, { port, isLeader: false }).create();
+    let leader;
+    let follower;
+    beforeEach(() => {
+      leader = cluster(RegistryClient, { port, isLeader: true })
+        .delegate('subscribe', 'subscribe')
+        .delegate('publish', 'publish')
+        .override('foo', 'bar')
+        .create();
+      follower = cluster(RegistryClient, { port, isLeader: false }).create();
+    });
+
+    afterEach(function* () {
+      assert(serverMap.has(port) === true);
+      yield cluster.close(follower);
+      yield cluster.close(leader);
+      assert(leader[symbols.innerClient]._realClient.closed === true); // make sure real client is closed
+      assert(serverMap.has(port) === false); // make sure net.Server is closed
+    });
 
     it('should have subscribe/publish method', () => {
       assert(is.function(leader.subscribe));
@@ -81,6 +95,85 @@ describe('test/index.test.js', () => {
         dataId: 'com.alibaba.dubbo.demo.DemoService',
         publishData: 'dubbo://30.20.78.300:20880/com.alibaba.dubbo.demo.DemoService?anyhost=true&application=demo-provider&dubbo=2.0.0&generic=false&interface=com.alibaba.dubbo.demo.DemoService&loadbalance=roundrobin&methods=sayHello&owner=william&pid=81281&side=provider&timestamp=1481613276143',
       });
+    });
+
+    it('should should not close net.Server if other client is using same port', function* () {
+      class AnotherClient extends Base {
+        constructor() {
+          super();
+          this.ready(true);
+        }
+      }
+      const anotherleader = cluster(AnotherClient, { port, isLeader: true }).create();
+      yield anotherleader.ready();
+
+      // assert has problem with global scope virable
+      // assert(serverMap.has(port) === true);
+      if (!serverMap.has(port)) throw new Error();
+      yield cluster.close(anotherleader);
+
+      // leader is using the same port, so anotherleader.close should not close the net.Server
+      if (!serverMap.has(port)) throw new Error();
+    });
+
+    it('should realClient.close be a generator function ok', function* () {
+      class RealClientWithGeneratorClose extends Base {
+        constructor() {
+          super();
+          this.ready(true);
+        }
+        * close() {
+          this.closed = true;
+        }
+      }
+      const anotherleader = cluster(RealClientWithGeneratorClose, { port, isLeader: true }).create();
+      yield anotherleader.ready();
+      yield cluster.close(anotherleader);
+      // make sure real client is closed;
+      // assert has problem with global scope virable
+      if (anotherleader[symbols.innerClient]._realClient.closed !== true) {
+        throw new Error();
+      }
+    });
+
+    it('should realClient.close be a normal function ok', function* () {
+      class RealClientWithNormalClose extends Base {
+        constructor() {
+          super();
+          this.ready(true);
+        }
+        close() {
+          this.closed = true;
+        }
+      }
+      const anotherleader = cluster(RealClientWithNormalClose, { port, isLeader: true }).create();
+      yield anotherleader.ready();
+      yield cluster.close(anotherleader);
+      // make sure real client is closed;
+      // assert has problem with global scope virable
+      if (anotherleader[symbols.innerClient]._realClient.closed !== true) {
+        throw new Error();
+      }
+    });
+
+    it('should realClient.close be a function returning promise ok', function* () {
+      class RealClientWithCloseReturningPromise extends Base {
+        constructor() {
+          super();
+          this.ready(true);
+        }
+        close() {
+          this.closed = true;
+        }
+      }
+      const anotherleader = cluster(RealClientWithCloseReturningPromise, { port, isLeader: true }).create();
+      yield anotherleader.ready();
+      yield cluster.close(anotherleader);
+      // make sure real client is closed;
+      // assert has problem with global scope virable
+      if (anotherleader[symbols.innerClient]._realClient.closed !== true) {
+        throw new Error();
+      }
     });
   });
 
@@ -469,7 +562,7 @@ describe('test/index.test.js', () => {
     it('should subscribe ok', done => {
       const follower = cluster(RegistryClient, { port, isLeader: false, maxWaitTime: 3000 }).create(4322, '224.5.6.9');
       follower.once('error', err => {
-        assert(err.message === `[ClusterClient] leader dose not be active in 3000ms on port:${port}`);
+        assert(err.message === `[ClusterClient] leader does not be active in 3000ms on port:${port}`);
         done();
       });
     });

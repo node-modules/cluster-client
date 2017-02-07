@@ -95,15 +95,18 @@ class ClusterServer extends Base {
   }
 
   close() {
-    if (this.isClosed) {
-      return;
-    }
+    return new Promise((resolve, reject) => {
+      if (this.isClosed) return resolve();
 
-    this._server.close();
+      this._server.close(err => {
+        if (err) return reject(err);
 
-    for (const socket of this._sockets.values()) {
-      socket.destroy();
-    }
+        for (const socket of this._sockets.values()) {
+          socket.destroy();
+        }
+        resolve();
+      });
+    });
   }
 
   _handleSocket(socket) {
@@ -189,6 +192,11 @@ class ClusterServer extends Base {
     }
   }
 
+  static* close(name, server) {
+    typeSet.delete(`${name}@${server._port}`);
+    // TODO calculate close
+  }
+
   /**
    * Wait for Leader Startup
    *
@@ -204,7 +212,7 @@ class ClusterServer extends Base {
 
       // if timeout, throw error
       if (Date.now() - start > timeout) {
-        throw new Error(`[ClusterClient] leader dose not be active in ${timeout}ms on port:${port}`);
+        throw new Error(`[ClusterClient] leader does not be active in ${timeout}ms on port:${port}`);
       }
       if (!connect) {
         yield sleep(3000);
