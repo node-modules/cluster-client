@@ -35,7 +35,6 @@ module.exports = function(app) {
 
   app.get('/return/buffer', function* () {
     const ret = yield app.mockClient.returnBuffer();
-    console.log('ret', ret);
     this.body = Buffer.isBuffer(ret);
   });
 };
