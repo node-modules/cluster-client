@@ -48,6 +48,13 @@ describe('test/egg.test.js', () => {
       });
   });
 
+  it('should not throw error when invoke function returning undefined', function* () {
+    const ret = yield request(app.callback())
+      .get('/return/undefined');
+
+    assert(ret.body === true);
+  });
+
   after(() => {
     app.close();
   });
