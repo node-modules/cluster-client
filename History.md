@@ -1,4 +1,9 @@
 
+1.2.0 / 2017-02-20
+==================
+
+  * feat: use serialize-json to support encode/decode buffer, date, undef… (#10)
+
 1.1.0 / 2017-02-07
 ==================
 
