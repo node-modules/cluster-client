@@ -22,4 +22,9 @@ module.exports = function(app) {
     app.messenger.sendToAgent('die');
     this.body = 'ok';
   });
+
+  app.get('/return/undefined', function* () {
+    const ret = yield app.mockClient.returnUndefined();
+    this.body = ret === undefined;
+  });
 };
