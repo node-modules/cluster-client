@@ -1,6 +1,6 @@
 'use strict';
 
-const assert = require('power-assert');
+const assert = require('assert');
 const mock = require('egg-mock');
 const request = require('supertest');
 

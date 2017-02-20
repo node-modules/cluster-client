@@ -122,6 +122,7 @@ describe('test/index.test.js', () => {
           super();
           this.ready(true);
         }
+
         * close() {
           this.closed = true;
         }
@@ -481,10 +482,24 @@ describe('test/index.test.js', () => {
 
   describe('server close', () => {
     const port = 3330 + portDelta;
-    const client_1 = cluster(RegistryClient, { port }).create(4323, '224.5.6.10');
-    const client_2 = cluster(RegistryClient, { port }).create(4323, '224.5.6.10');
-    const client_3 = cluster(RegistryClient, { port }).create(4323, '224.5.6.10');
     const innerClient = Symbol.for('ClusterClient#innerClient');
+    let client_1;
+    let client_2;
+    let client_3;
+    before(function* () {
+      client_1 = cluster(RegistryClient, { port }).create(4323, '224.5.6.10');
+      client_2 = cluster(RegistryClient, { port }).create(4323, '224.5.6.10');
+      client_3 = cluster(RegistryClient, { port }).create(4323, '224.5.6.10');
+      yield client_1.ready();
+      yield client_2.ready();
+      yield client_3.ready();
+    });
+
+    after(() => {
+      cluster.close(client_1);
+      cluster.close(client_2);
+      cluster.close(client_3);
+    });
 
     it('should re subscribe / publish ok', done => {
       done = pedding(done, 3);
