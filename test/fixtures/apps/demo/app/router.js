@@ -22,4 +22,20 @@ module.exports = function(app) {
     app.messenger.sendToAgent('die');
     this.body = 'ok';
   });
+
+  app.get('/return/undefined', function* () {
+    const ret = yield app.mockClient.returnUndefined();
+    this.body = ret === undefined;
+  });
+
+  app.get('/return/date', function* () {
+    const ret = yield app.mockClient.returnDate();
+    this.body = ret instanceof Date;
+  });
+
+  app.get('/return/buffer', function* () {
+    const ret = yield app.mockClient.returnBuffer();
+    console.log('ret', ret);
+    this.body = Buffer.isBuffer(ret);
+  });
 };

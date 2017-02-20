@@ -48,6 +48,27 @@ describe('test/egg.test.js', () => {
       });
   });
 
+  it('should returning undefined', function* () {
+    const ret = yield request(app.callback())
+      .get('/return/undefined');
+
+    assert(ret.body === true);
+  });
+
+  it('should return date', function* () {
+    const ret = yield request(app.callback())
+      .get('/return/date');
+
+    assert(ret.body === true);
+  });
+
+  it('should return buffer', function* () {
+    const ret = yield request(app.callback())
+      .get('/return/buffer');
+
+    assert(ret.body === true);
+  });
+
   after(() => {
     app.close();
   });
