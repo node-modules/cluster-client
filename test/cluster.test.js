@@ -36,6 +36,7 @@ describe('test/cluster.test.js', () => {
   });
 
   it('should subscibe & publish ok after leader die', done => {
+    done = pedding(done, 2);
     const leader = coffee.fork(path.join(__dirname, 'supports/sub.js'), [ false ]);
     leader.end();
 
