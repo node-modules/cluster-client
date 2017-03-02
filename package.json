@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "autod": "autod",
-    "lint": "eslint . --ext .js --fix",
+    "lint": "eslint . --ext .js",
     "test": "npm run lint && npm run test-local",
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
