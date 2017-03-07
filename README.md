@@ -123,7 +123,7 @@ win /   +------------------+  \ lose
 $ npm install cluster-client --save
 ```
 
-Node.js >= 4.0.0 required
+Node.js >= 6.0.0 required
 
 ## Usage
 
@@ -204,11 +204,13 @@ co(function*() {
 ## API
 
 - `delegate(from, to)`:
-  create delegate method, `from` is the method name your want to create, and `to` have 3 possible values: subscribe, publish, and invoke, the default value is invoke
+  create delegate method, `from` is the method name your want to create, and `to` have 3 possible values: [ `subscribe`, `unSubscribe`, `publish`, `invoke`, `invokeOneway`, `close` ],  and the default value is invoke
 - `override(name, value)`:
   override one property
 - `create(…)`
   create the client instance
+- `close(client)`
+  close the client
 
 
 [MIT](LICENSE)
