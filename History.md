@@ -1,4 +1,9 @@
 
+1.4.0 / 2017-03-08
+==================
+
+  * feat: support unSubscribe, invokeOneway & close self (#14)
+
 1.3.2 / 2017-03-08
 ==================
 
