@@ -1,5 +1,6 @@
 'use strict';
 
+const net = require('net');
 const URL = require('url');
 const cluster = require('../');
 const is = require('is-type-of');
@@ -8,6 +9,7 @@ const assert = require('assert');
 const pedding = require('pedding');
 const serverMap = global.serverMap;
 const symbols = require('../lib/symbol');
+const NotifyClient = require('./supports/notify_client');
 const RegistryClient = require('./supports/registry_client');
 const portDelta = Number(process.versions.node.slice(0, 1));
 
@@ -202,7 +204,7 @@ describe('test/index.test.js', () => {
       leader.once('error', err => {
         console.log(err);
         assert(err);
-        assert(/client no response in \d+ms, maybe the connection is close on other side\./.test(err.message));
+        assert(/client no response in \d+ms exceeding maxIdleTime \d+ms, maybe the connection is close on other side\./.test(err.message));
         assert(err.name === 'ClusterClientNoResponseError');
         done();
       });
@@ -580,6 +582,52 @@ describe('test/index.test.js', () => {
         assert(err.message === `[ClusterClient] leader does not be active in 3000ms on port:${port}`);
         done();
       });
+    });
+  });
+
+  describe('leader subscribe', () => {
+    let port;
+    before(done => {
+      const server = net.createServer();
+      server.listen(0, () => {
+        port = server.address().port;
+        console.log('using port =>', port);
+        server.close();
+        done();
+      });
+    });
+
+    it('should subscribe mutli data at same time', function* () {
+      const client = cluster(NotifyClient, { port })
+        .delegate('publish', 'invoke')
+        .create();
+      client.subscribe({ dataId: 'foo' }, val => {
+        client.emit('foo_1', val);
+      });
+      client.subscribe({ dataId: 'foo' }, val => {
+        client.emit('foo_2', val);
+      });
+      client.subscribe({ dataId: 'bar' }, val => {
+        client.emit('bar_1', val);
+      });
+
+      let result = yield [
+        client.publish({ dataId: 'foo', publishData: 'xxx' }),
+        client.await('foo_1'),
+        client.await('foo_2'),
+      ];
+      assert(result && result.length === 3);
+      assert(result[1] === 'xxx');
+      assert(result[2] === 'xxx');
+
+      result = yield [
+        client.publish({ dataId: 'bar', publishData: 'yyy' }),
+        client.await('bar_1'),
+      ];
+      assert(result && result.length === 2);
+      assert(result[1] === 'yyy');
+
+      cluster.close(client);
     });
   });
 });
