@@ -202,7 +202,6 @@ describe('test/index.test.js', () => {
 
       const start = Date.now();
       leader.once('error', err => {
-        console.log(err);
         assert(err);
         assert(/client no response in \d+ms exceeding maxIdleTime \d+ms, maybe the connection is close on other side\./.test(err.message));
         assert(err.name === 'ClusterClientNoResponseError');
