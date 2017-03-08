@@ -1,4 +1,9 @@
 
+1.3.2 / 2017-03-08
+==================
+
+  * fix: fix leader subscribe issue & heartbeat timeout issue (#15)
+
 1.3.1 / 2017-03-07
 ==================
 
