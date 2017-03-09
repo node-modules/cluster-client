@@ -2,7 +2,7 @@
   "name": "cluster-client",
   "version": "1.4.0",
   "description": "Sharing Connection among Multi-Process Nodejs",
-  "main": "./lib/index.js",
+  "main": "./index.js",
   "files": [
     "lib"
   ],

@@ -204,13 +204,99 @@ co(function*() {
 ## API
 
 - `delegate(from, to)`:
-  create delegate method, `from` is the method name your want to create, and `to` have 3 possible values: [ `subscribe`, `unSubscribe`, `publish`, `invoke`, `invokeOneway`, `close` ],  and the default value is invoke
+  create delegate method, `from` is the method name your want to create, and `to` have 6 possible values: [ `subscribe`, `unSubscribe`, `publish`, `invoke`, `invokeOneway`, `close` ],  and the default value is invoke
 - `override(name, value)`:
   override one property
 - `create(…)`
   create the client instance
 - `close(client)`
   close the client
+- `APIClientBase`  a base class to help you create your api client
 
+## Best Practice
+
+1. DataClient
+  - Only provider data API, interact with server and maintain persistent connections etc.
+  - No need to concern `cluster` issue
+2. APIClient
+  - Using `cluster-client` to wrap DataClient
+  - Put your bussiness logic here
+
+**DataClient**
+```js
+const Base = require('sdk-base');
+
+class DataClient extends Base {
+  constructor(options) {
+    super(options);
+    this.ready(true);
+  }
+
+  subscribe(info, listener) {
+    // subscribe data from server
+  }
+
+  publish(info) {
+    // publish data to server
+  }
+
+  * getData(id) {
+    // asynchronous API
+  }
+}
+```
+
+**APIClient**
+```js
+const DataClient = require('./your-data-client');
+const { APIClientBase } = require('cluster-client');
+
+class APIClient extends APIClientBase {
+  constructor(options) {
+    super(options);
+    this._cache = new Map();
+  }
+  get DataClient() {
+    return DataClient;
+  }
+  get delegates() {
+    return {
+      getData: 'invoke',
+    };
+  }
+  get clusterOptions() {
+    return {
+      name: 'MyClient',
+    };
+  }
+  subscribe(...args) {
+    return this._client.subscribe(...args);
+  }
+  publish(...args) {
+    return this._client.publish(...args);
+  }
+  * getData(id) {
+    // write your business logic & use data client API
+    if (this._cache.has(id)) {
+      return this._cache.get(id);
+    }
+    const data = yield this._client.getData(id);
+    this._cache.set(id, data);
+    return datal
+  }
+}
+```
+
+```js
+|------------------------------------------------|
+| APIClient                                      |
+|       |----------------------------------------|
+|       | ClusterClient                          |
+|       |      |---------------------------------|
+|       |      | DataClient                      |
+|-------|------|---------------------------------|
+```
+
+For more information, you can refer to the [discussion](https://github.com/eggjs/egg/issues/322)
 
 [MIT](LICENSE)

@@ -1,10 +1,9 @@
 'use strict';
 
 const net = require('net');
-const cluster = require('..');
+const APIClientBase = require('..').APIClientBase;
 const is = require('is-type-of');
 const assert = require('assert');
-const Client = require('./supports/client');
 
 describe('test/client.test.js', () => {
   let port;
@@ -19,13 +18,48 @@ describe('test/client.test.js', () => {
     });
   });
 
+  class ClusterClient extends APIClientBase {
+    get DataClient() {
+      return require('./supports/client');
+    }
+
+    get delegates() {
+      return {
+        unPublish: 'invokeOneway',
+      };
+    }
+
+    get clusterOptions() {
+      return {
+        responseTimeout: 1000,
+        port,
+      };
+    }
+
+    subscribe(...args) {
+      return this._client.subscribe(...args);
+    }
+
+    unSubscribe(...args) {
+      return this._client.unSubscribe(...args);
+    }
+
+    publish(...args) {
+      return this._client.publish(...args);
+    }
+
+    unPublish(...args) {
+      return this._client.unPublish(...args);
+    }
+
+    close() {
+      return this._client.close();
+    }
+  }
+
   it('should work ok', function* () {
-    const client_1 = cluster(Client, { responseTimeout: 1000, port })
-      .delegate('unPublish', 'invokeOneway')
-      .create();
-    const client_2 = cluster(Client, { responseTimeout: 1000, port })
-      .delegate('unPublish', 'invokeOneway')
-      .create();
+    const client_1 = new ClusterClient();
+    const client_2 = new ClusterClient();
 
     const listener_1 = val => {
       client_1.emit('foo_received_1', val);
