@@ -1,6 +1,6 @@
 {
   "name": "cluster-client",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Sharing Connection among Multi-Process Nodejs",
   "main": "./index.js",
   "files": [
@@ -12,7 +12,8 @@
     "test": "npm run lint && npm run test-local",
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
-    "ci": "npm run lint && npm run cov"
+    "ci": "npm run lint && npm run cov",
+    "contributors": "contributors -f plain -o AUTHORS"
   },
   "repository": {
     "type": "git",
@@ -45,6 +46,7 @@
     "address": "^1.0.1",
     "autod": "^2.7.1",
     "coffee": "^3.3.0",
+    "contributors": "^0.5.1",
     "egg": "^0.5.0",
     "egg-bin": "^2.2.3",
     "egg-ci": "^1.5.0",

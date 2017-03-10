@@ -1,4 +1,9 @@
 
+1.5.0 / 2017-03-10
+==================
+
+  * feat: add APIClientBase to help you create your api client (#16)
+
 1.4.0 / 2017-03-08
 ==================
 
