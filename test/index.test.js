@@ -629,4 +629,14 @@ describe('test/index.test.js', () => {
       cluster.close(client);
     });
   });
+
+  describe('error', () => {
+    it('should throw error if delegate to not implement method', () => {
+      assert.throws(() => {
+        cluster(NotifyClient)
+          .delegate('not-exist')
+          .create();
+      }, '[ClusterClient] api: not-exist not implement in client');
+    });
+  });
 });
