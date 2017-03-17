@@ -1,4 +1,9 @@
 
+1.5.3 / 2017-03-17
+==================
+
+  * fix: make sure subscribe listener triggered asynchronized (#19)
+
 1.5.2 / 2017-03-14
 ==================
 
