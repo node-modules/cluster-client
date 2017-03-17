@@ -151,4 +151,24 @@ describe('test/client.test.js', () => {
     client_1.close();
     client_2.close();
   });
+
+  it('should subscribe for second time', function* () {
+    const client = new ClusterClient();
+    client.publish({ key: 'foo', value: 'bar' });
+
+    client.subscribe({ key: 'foo' }, val => {
+      client.emit('foo_received_1', val);
+    });
+
+    let ret = yield client.await('foo_received_1');
+    assert.deepEqual(ret, [ 'bar' ]);
+
+    client.subscribe({ key: 'foo' }, val => {
+      client.emit('foo_received_2', val);
+    });
+    ret = yield client.await('foo_received_2');
+    assert.deepEqual(ret, [ 'bar' ]);
+
+    yield client.close();
+  });
 });
