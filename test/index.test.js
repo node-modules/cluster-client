@@ -1,7 +1,9 @@
 'use strict';
 
+const spy = require('spy');
 const net = require('net');
 const URL = require('url');
+const mm = require('egg-mock');
 const cluster = require('../');
 const is = require('is-type-of');
 const Base = require('sdk-base');
@@ -288,6 +290,31 @@ describe('test/index.test.js', () => {
       } catch (err) {
         assert(err.message === 'mock error');
       }
+    });
+
+    it('should be mocked', function* () {
+      mm(leader, 'get', function* () {
+        return '456';
+      });
+      mm(follower, 'get', function* () {
+        return '456';
+      });
+
+      let ret = yield leader.get('123');
+      assert(ret === '456');
+      ret = yield follower.get('123');
+      assert(ret === '456');
+
+    });
+
+    it('should be spied', function* () {
+      const leaderGet = spy(leader, 'get');
+      const followerGet = spy(follower, 'get');
+
+      yield leader.get('123');
+      yield follower.get('123');
+      assert(leaderGet.callCount === 1);
+      assert(followerGet.callCount === 1);
     });
 
     it('should invoke callback function ok', done => {
