@@ -56,6 +56,7 @@
     "mm": "^2.1.0",
     "npminstall": "^2.13.3",
     "pedding": "^1.1.0",
+    "spy": "^1.0.0",
     "supertest": "^3.0.0"
   },
   "engines": {
