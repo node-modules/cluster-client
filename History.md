@@ -1,4 +1,9 @@
 
+1.6.0 / 2017-04-18
+==================
+
+  * feat: make clustClient method writable to support mock or spy (#21)
+
 1.5.4 / 2017-04-12
 ==================
 
