@@ -1,4 +1,10 @@
 
+1.6.1 / 2017-04-20
+==================
+
+  * fix: invoke before client ready issue (#23)
+  * fix: fix symbol property error (#22)
+
 1.6.0 / 2017-04-18
 ==================
 
