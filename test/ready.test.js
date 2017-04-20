@@ -25,6 +25,12 @@ describe('test/ready.test.js', () => {
         this.ready(new Error('mock error'));
       });
     }
+
+    * getData() {
+      return '123';
+    }
+
+    close() {}
   }
 
   class APIClient extends APIClientBase {
@@ -37,13 +43,43 @@ describe('test/ready.test.js', () => {
         port,
       };
     }
+
+    * getData() {
+      return yield this._client.getData();
+    }
+
+    close() {
+      return this._client.close();
+    }
   }
 
-  it('should ready failed', done => {
+  it('should ready failed', function* () {
     const client = new APIClient();
-    client.ready(err => {
+    try {
+      yield client.ready();
+      assert(false, 'should not run here');
+    } catch (err) {
+      assert(err.message === 'mock error');
+    }
+    yield client.close();
+  });
+
+  it('should invoke with error while client ready failed', function* () {
+    const client_1 = new APIClient();
+    try {
+      yield client_1.getData();
+      assert(false, 'should not run here');
+    } catch (err) {
       assert(err && err.message === 'mock error');
-      done();
-    });
+    }
+    const client_2 = new APIClient();
+    try {
+      yield client_2.getData();
+      assert(false, 'should not run here');
+    } catch (err) {
+      assert(err && err.message === 'mock error');
+    }
+    yield client_2.close();
+    yield client_1.close();
   });
 });
