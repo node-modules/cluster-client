@@ -219,6 +219,7 @@ describe('test/index.test.js', () => {
   });
 
   describe('invoke', () => {
+    const SYMBOL_FN = Symbol('MockClient#symbolFN');
 
     class MockClient extends Base {
       constructor() {
@@ -252,6 +253,10 @@ describe('test/index.test.js', () => {
             }
           });
         });
+      }
+
+      [SYMBOL_FN]() {
+        return 'symboFn!';
       }
 
       timeout(cb) {
@@ -290,6 +295,11 @@ describe('test/index.test.js', () => {
       } catch (err) {
         assert(err.message === 'mock error');
       }
+    });
+
+    it('should symbol function not delegated', function* () {
+      assert(!leader[SYMBOL_FN]);
+      assert(!follower[SYMBOL_FN]);
     });
 
     it('should be mocked', function* () {
