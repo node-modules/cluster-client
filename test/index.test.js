@@ -32,8 +32,14 @@ describe('test/index.test.js', () => {
 
     afterEach(function* () {
       assert(serverMap.has(port) === true);
-      yield cluster.close(follower);
-      yield cluster.close(leader);
+      yield Promise.race([
+        cluster.close(follower),
+        follower.await('error'),
+      ]);
+      yield Promise.race([
+        cluster.close(leader),
+        leader.await('error'),
+      ]);
       assert(leader[symbols.innerClient]._realClient.closed === true); // make sure real client is closed
       assert(serverMap.has(port) === false); // make sure net.Server is closed
     });
