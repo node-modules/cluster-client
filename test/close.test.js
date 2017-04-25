@@ -6,6 +6,7 @@ const path = require('path');
 const cluster = require('../');
 const assert = require('assert');
 const CloseClient = require('./supports/close_client');
+const RegistyClient = require('./supports/registry_client');
 
 describe('test/close.test.js', () => {
   let port;
@@ -29,4 +30,33 @@ describe('test/close.test.js', () => {
     assert(!fs.existsSync(path.join(__dirname, `supports/${process.version}.bin`)));
   });
 
+  it('should APIClient has default close', function* () {
+    class APIClient extends cluster.APIClientBase {
+      get DataClient() {
+        return CloseClient;
+      }
+
+      get clusterOptions() {
+        return { port };
+      }
+    }
+
+    let client = new APIClient();
+    yield client.ready();
+    yield client.close();
+
+    class APIClient2 extends cluster.APIClientBase {
+      get DataClient() {
+        return RegistyClient;
+      }
+
+      get clusterOptions() {
+        return { port };
+      }
+    }
+
+    client = new APIClient2();
+    yield client.ready();
+    yield client.close();
+  });
 });
