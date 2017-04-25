@@ -17,4 +17,4 @@ run
 !.eslintrc
 !.gitignore
 !.travis.yml
-.bin
+*.bin
