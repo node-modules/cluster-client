@@ -1,4 +1,9 @@
 
+1.6.4 / 2017-05-08
+==================
+
+  * chore: remove unnecessary log, using debug instead (#27)
+
 1.6.3 / 2017-04-25
 ==================
 
