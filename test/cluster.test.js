@@ -12,7 +12,7 @@ describe('test/cluster.test.js', () => {
       if (err) {
         commit(err);
       }
-      console.log(err, meta);
+      console.log(meta);
       console.log('publish finish');
     });
 

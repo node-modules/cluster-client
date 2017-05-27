@@ -7,6 +7,30 @@ const utils = require('../lib/utils');
 
 describe('test/utils.test.js', () => {
 
+  it('should call nextId ok', () => {
+    const id = utils.nextId();
+    assert(typeof id === 'number');
+    assert((id + 1) === utils.nextId());
+    utils.setId(Math.pow(2, 30));
+    assert(utils.nextId() === 1);
+  });
+
+  it('should callFn ok', function* () {
+    yield utils.callFn(null);
+    const ret = yield utils.callFn(function* (a, b) {
+      return a + b;
+    }, [ 1, 2 ]);
+    assert(ret === 3);
+    yield utils.callFn(function(a, b) {
+      return Promise.resolve(a + b);
+    }, [ 1, 2 ]);
+    assert(ret === 3);
+    yield utils.callFn(function(a, b) {
+      return a + b;
+    }, [ 1, 2 ]);
+    assert(ret === 3);
+  });
+
   it('should delegateEvents ok', done => {
     const from = new Base();
     const to = new Base();
