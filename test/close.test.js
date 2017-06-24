@@ -4,6 +4,7 @@ const fs = require('fs');
 const net = require('net');
 const path = require('path');
 const cluster = require('../');
+const Base = require('sdk-base');
 const assert = require('assert');
 const CloseClient = require('./supports/close_client');
 const RegistyClient = require('./supports/registry_client');
@@ -58,5 +59,32 @@ describe('test/close.test.js', () => {
     client = new APIClient2();
     yield client.ready();
     yield client.close();
+  });
+
+  it('should handle error event after closed', function* () {
+    class DataClient extends Base {
+      constructor(options) {
+        super(options);
+        this.ready(true);
+      }
+
+      close() {
+        setTimeout(() => {
+          this.emit('error', new Error('mock error'));
+        }, 2000);
+      }
+    }
+
+    const leader = cluster(DataClient, { port })
+      .create();
+
+    yield leader.ready();
+    yield leader.close();
+
+    try {
+      yield leader.await('error');
+    } catch (err) {
+      assert(err.message === 'mock error');
+    }
   });
 });

@@ -480,9 +480,20 @@ describe('test/index.test.js', () => {
 
   describe('not broadcast', () => {
     const port = 4440 + portDelta;
-    const leader = cluster(RegistryClient, { isLeader: true, port, isBroadcast: false }).create(4322, '224.5.6.9');
-    const follower = cluster(RegistryClient, { isLeader: false, port, isBroadcast: false }).create(4322, '224.5.6.9');
-    const follower2 = cluster(RegistryClient, { isLeader: false, port, isBroadcast: false }).create(4322, '224.5.6.9');
+    let leader;
+    let follower;
+    let follower2;
+    before(function* () {
+      leader = cluster(RegistryClient, { isLeader: true, port, isBroadcast: false }).create(4322, '224.5.6.9');
+      follower = cluster(RegistryClient, { isLeader: false, port, isBroadcast: false }).create(4322, '224.5.6.9');
+      follower2 = cluster(RegistryClient, { isLeader: false, port, isBroadcast: false }).create(4322, '224.5.6.9');
+    });
+    after(function* () {
+      yield follower.close();
+      yield follower2.close();
+      yield leader.close();
+    });
+
 
     it('should subscribe ok', done => {
       let trigger = false;

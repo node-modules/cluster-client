@@ -84,6 +84,12 @@ describe('test/client.test.js', () => {
     ret = yield client_2.await('foo_received');
     assert(is.array(ret) && ret.length === 0);
 
+    client_2.subscribe({ key: 'foo' }, val => {
+      client_2.emit('foo_received_again', val);
+    });
+    ret = yield client_2.await('foo_received_again');
+    assert(is.array(ret) && ret.length === 0);
+
     // publish
     client_2.publish({ key: 'foo', value: 'bar' });
 
