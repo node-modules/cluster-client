@@ -1,4 +1,9 @@
 
+1.6.5 / 2017-06-24
+==================
+
+  * fix: ignore error after close & register channel issue (#28)
+
 1.6.4 / 2017-05-08
 ==================
 
