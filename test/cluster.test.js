@@ -69,4 +69,15 @@ describe('test/cluster.test.js', () => {
       .expect('stdout', /success/)
       .end(done);
   });
+
+  it('should work on cluster module', () => {
+    return coffee.fork(path.join(__dirname, 'supports/cluster_server.js'))
+      // .debug()
+      // make sure leader and follower exists
+      .expect('stdout', /, leader: true/)
+      .expect('stdout', /, leader: false/)
+      .expect('stdout', /client get val: bar/)
+      .expect('code', 0)
+      .end();
+  });
 });
