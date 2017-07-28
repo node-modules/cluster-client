@@ -4,7 +4,7 @@ const path = require('path');
 const coffee = require('coffee');
 const pedding = require('pedding');
 
-describe.only('test/cluster.test.js', () => {
+describe('test/cluster.test.js', () => {
   it('should subscibe & publish ok', commit => {
     const count = 4;
     const pub = coffee.fork(path.join(__dirname, 'supports/pub.js'));
