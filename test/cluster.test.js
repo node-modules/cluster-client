@@ -4,7 +4,7 @@ const path = require('path');
 const coffee = require('coffee');
 const pedding = require('pedding');
 
-describe('test/cluster.test.js', () => {
+describe.only('test/cluster.test.js', () => {
   it('should subscibe & publish ok', commit => {
     const count = 4;
     const pub = coffee.fork(path.join(__dirname, 'supports/pub.js'));
@@ -68,5 +68,16 @@ describe('test/cluster.test.js', () => {
     coffee.fork(path.join(__dirname, 'supports/invoke'))
       .expect('stdout', /success/)
       .end(done);
+  });
+
+  it('should work on cluster module', () => {
+    return coffee.fork(path.join(__dirname, 'supports/cluster_server.js'))
+      // .debug()
+      // make sure leader and follower exists
+      .expect('stdout', /, leader: true/)
+      .expect('stdout', /, leader: false/)
+      .expect('stdout', /client get val: bar/)
+      .expect('code', 0)
+      .end();
   });
 });
