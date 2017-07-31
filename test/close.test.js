@@ -86,5 +86,8 @@ describe('test/close.test.js', () => {
     } catch (err) {
       assert(err.message === 'mock error');
     }
+
+    // close again should work
+    yield leader.close();
   });
 });
