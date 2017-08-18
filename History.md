@@ -1,4 +1,9 @@
 
+1.6.8 / 2017-08-18
+==================
+
+  * fix: make sure leader ready before follower in egg (#32)
+
 1.6.7 / 2017-07-31
 ==================
 
