@@ -1,4 +1,9 @@
 
+1.7.0 / 2017-08-18
+==================
+
+  * feat: support custom port by env NODE_CLUSTER_CLIENT_PORT (#31)
+
 1.6.8 / 2017-08-18
 ==================
 
