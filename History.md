@@ -1,4 +1,9 @@
 
+1.7.1 / 2017-09-21
+==================
+
+  * fix: error occured while calling invokeOneway method if ready failed (#33)
+
 1.7.0 / 2017-08-18
 ==================
 
