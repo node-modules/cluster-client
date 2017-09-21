@@ -22,7 +22,7 @@ function startServer(port) {
       return {
         port,
         responseTimeout: 1000,
-        name: 'cluster-server-test',
+        name: `cluster-server-test-${process.version}`,
       };
     }
 

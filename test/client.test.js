@@ -1,9 +1,11 @@
 'use strict';
 
 const net = require('net');
+const Base = require('sdk-base');
 const APIClientBase = require('..').APIClientBase;
 const is = require('is-type-of');
 const assert = require('assert');
+const sleep = require('mz-modules/sleep');
 
 describe('test/client.test.js', () => {
   let port;
@@ -176,5 +178,72 @@ describe('test/client.test.js', () => {
     assert.deepEqual(ret, [ 'bar' ]);
 
     yield client.close();
+  });
+
+  class ErrorClient extends Base {
+    constructor() {
+      super({ initMethod: '_init' });
+    }
+
+    * _init() {
+      throw new Error('mock error');
+    }
+
+    send(data) {
+      console.log('send', data);
+    }
+  }
+
+  class APIClient extends APIClientBase {
+    get DataClient() {
+      return ErrorClient;
+    }
+
+    get delegates() {
+      return {
+        send: 'invokeOneway',
+      };
+    }
+
+    get clusterOptions() {
+      return {
+        name: 'test_invokeOneway_ready_error',
+        port,
+      };
+    }
+
+    * _init() {
+      throw new Error('mock error');
+    }
+
+    send(data) {
+      this._client.send(data);
+    }
+  }
+
+  it('invokeOneway + ready error', function* () {
+    const client = new APIClient();
+    client.send(123);
+    try {
+      yield client.ready();
+    } catch (err) {
+      assert(err.message === 'mock error');
+    }
+
+    const client2 = new APIClient();
+    client2.send(321);
+    try {
+      yield client2.ready();
+    } catch (err) {
+      assert(err.message === 'mock error');
+    }
+
+    client.send(123);
+    client2.send(321);
+
+    yield sleep(2000);
+
+    yield client.close();
+    yield client2.close();
   });
 });
