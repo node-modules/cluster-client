@@ -59,7 +59,7 @@ describe('test/client.test.js', () => {
     }
   }
 
-  it('should work ok', function* () {
+  it('should work ok', async function() {
     const client_1 = new ClusterClient();
     const client_2 = new ClusterClient();
 
@@ -76,29 +76,29 @@ describe('test/client.test.js', () => {
     });
     client_1.subscribe({ key: 'foo' }, listener_1);
 
-    let ret = yield client_1.await('foo_received');
+    let ret = await client_1.await('foo_received');
     assert(is.array(ret) && ret.length === 0);
 
     client_2.subscribe({ key: 'foo' }, val => {
       client_2.emit('foo_received', val);
     });
     client_2.subscribe({ key: 'foo' }, listener_2);
-    ret = yield client_2.await('foo_received');
+    ret = await client_2.await('foo_received');
     assert(is.array(ret) && ret.length === 0);
 
     client_2.subscribe({ key: 'foo' }, val => {
       client_2.emit('foo_received_again', val);
     });
-    ret = yield client_2.await('foo_received_again');
+    ret = await client_2.await('foo_received_again');
     assert(is.array(ret) && ret.length === 0);
 
     // publish
     client_2.publish({ key: 'foo', value: 'bar' });
 
-    let rs = yield [
+    let rs = await Promise.all([
       client_1.await('foo_received'),
       client_2.await('foo_received'),
-    ];
+    ]);
     assert(is.array(rs[0]) && rs[0].length === 1);
     assert(rs[0][0] === 'bar');
     assert(is.array(rs[1]) && rs[1].length === 1);
@@ -107,10 +107,10 @@ describe('test/client.test.js', () => {
     // unPublish
     client_2.unPublish({ key: 'foo', value: 'bar' });
 
-    rs = yield [
+    rs = await Promise.all([
       client_1.await('foo_received_1'),
       client_2.await('foo_received_2'),
-    ];
+    ]);
     assert(is.array(rs[0]) && rs[0].length === 0);
     assert(is.array(rs[1]) && rs[1].length === 0);
 
@@ -121,46 +121,38 @@ describe('test/client.test.js', () => {
     // publish again
     client_2.publish({ key: 'foo', value: 'bar_1' });
 
-    yield [
-      function* () {
-        yield new Promise((resolve, reject) => {
-          setTimeout(resolve, 3000);
-          client_1.once('foo_received_1', () => { reject(new Error('should not run here')); });
-        });
-      },
-      function* () {
-        yield new Promise((resolve, reject) => {
-          setTimeout(resolve, 3000);
-          client_2.once('foo_received_2', () => { reject(new Error('should not run here')); });
-        });
-      },
-    ];
+    await Promise.all([
+      new Promise((resolve, reject) => {
+        setTimeout(resolve, 3000);
+        client_1.once('foo_received_1', () => { reject(new Error('should not run here')); });
+      }),
+      new Promise((resolve, reject) => {
+        setTimeout(resolve, 3000);
+        client_2.once('foo_received_2', () => { reject(new Error('should not run here')); });
+      }),
+    ]);
 
     client_1.unSubscribe({ key: 'foo' });
     client_2.unSubscribe({ key: 'foo' });
 
     client_2.publish({ key: 'foo', value: 'bar_2' });
 
-    yield [
-      function* () {
-        yield new Promise((resolve, reject) => {
-          setTimeout(resolve, 3000);
-          client_1.once('foo_received', () => { reject(new Error('should not run here')); });
-        });
-      },
-      function* () {
-        yield new Promise((resolve, reject) => {
-          setTimeout(resolve, 3000);
-          client_2.once('foo_received', () => { reject(new Error('should not run here')); });
-        });
-      },
-    ];
+    await Promise.all([
+      new Promise((resolve, reject) => {
+        setTimeout(resolve, 3000);
+        client_1.once('foo_received', () => { reject(new Error('should not run here')); });
+      }),
+      new Promise((resolve, reject) => {
+        setTimeout(resolve, 3000);
+        client_2.once('foo_received', () => { reject(new Error('should not run here')); });
+      }),
+    ]);
 
     client_1.close();
     client_2.close();
   });
 
-  it('should subscribe for second time', function* () {
+  it('should subscribe for second time', async function() {
     const client = new ClusterClient();
     client.publish({ key: 'foo', value: 'bar' });
 
@@ -168,29 +160,36 @@ describe('test/client.test.js', () => {
       client.emit('foo_received_1', val);
     });
 
-    let ret = yield client.await('foo_received_1');
+    let ret = await client.await('foo_received_1');
     assert.deepEqual(ret, [ 'bar' ]);
 
     client.subscribe({ key: 'foo' }, val => {
       client.emit('foo_received_2', val);
     });
-    ret = yield client.await('foo_received_2');
+    ret = await client.await('foo_received_2');
     assert.deepEqual(ret, [ 'bar' ]);
 
-    yield client.close();
+    await client.close();
   });
 
   class ErrorClient extends Base {
     constructor() {
       super({ initMethod: '_init' });
+
+      this.data = '';
     }
 
-    * _init() {
+    async _init() {
+      await sleep(1000);
       throw new Error('mock error');
     }
 
     send(data) {
       console.log('send', data);
+    }
+
+    async getData() {
+      return this.data;
     }
   }
 
@@ -212,20 +211,47 @@ describe('test/client.test.js', () => {
       };
     }
 
-    * _init() {
+    async _init() {
+      await sleep(1000);
       throw new Error('mock error');
     }
 
     send(data) {
       this._client.send(data);
     }
+
+    async getData() {
+      return await this._client.getData();
+    }
   }
 
-  it('invokeOneway + ready error', function* () {
+  it('should invoke with ready err', async function() {
+    const leader = new APIClient();
+    try {
+      await leader.getData();
+      assert(false);
+    } catch (err) {
+      assert(err && err.message === 'mock error');
+    }
+
+    const follower = new APIClient();
+
+    try {
+      await follower.getData();
+      assert(false);
+    } catch (err) {
+      assert(err && err.message === 'mock error');
+    }
+
+    await follower.close();
+    await follower.close();
+  });
+
+  it('invokeOneway + ready error', async function() {
     const client = new APIClient();
     client.send(123);
     try {
-      yield client.ready();
+      await client.ready();
     } catch (err) {
       assert(err.message === 'mock error');
     }
@@ -233,7 +259,7 @@ describe('test/client.test.js', () => {
     const client2 = new APIClient();
     client2.send(321);
     try {
-      yield client2.ready();
+      await client2.ready();
     } catch (err) {
       assert(err.message === 'mock error');
     }
@@ -241,9 +267,9 @@ describe('test/client.test.js', () => {
     client.send(123);
     client2.send(321);
 
-    yield sleep(2000);
+    await sleep(2000);
 
-    yield client.close();
-    yield client2.close();
+    await client.close();
+    await client2.close();
   });
 });

@@ -41,35 +41,37 @@ describe('test/connection.test.js', () => {
     server.once('close', done);
   });
 
-  it('should throw error if send timeout', function* () {
+  it('should throw error if send timeout', async function() {
     const socket = net.connect(port, '127.0.0.1');
-    yield awaitEvent(socket, 'connect');
-    yield sleep(100);
+    await awaitEvent(socket, 'connect');
+    await sleep(100);
     assert(conns.has(socket.localPort));
 
     const conn = conns.get(socket.localPort);
     try {
-      yield cb => {
+      await new Promise((resolve, reject) => {
         conn.send(new Request({
           connObj: { foo: 'bar' },
           timeout: 1000,
-        }), cb);
-      };
+        }), err => {
+          if (err) { reject(err); } else { resolve(); }
+        });
+      });
       assert(false, 'no here');
     } catch (err) {
       assert(err && err.name === 'ClusterConnectionResponseTimeoutError');
       assert(err.message === `[ClusterClient] no response in 1000ms, remotePort#${socket.localPort}`);
     }
     socket.destroy();
-    yield awaitEvent(socket, 'close');
-    yield sleep(100);
+    await awaitEvent(socket, 'close');
+    await sleep(100);
     assert(!conns.has(socket.localPort));
   });
 
-  it('should handle request ok', function* () {
+  it('should handle request ok', async function() {
     const socket = net.connect(port, '127.0.0.1');
-    yield awaitEvent(socket, 'connect');
-    yield sleep(100);
+    await awaitEvent(socket, 'connect');
+    await sleep(100);
     assert(conns.has(socket.localPort));
 
     const conn = conns.get(socket.localPort);
@@ -79,31 +81,31 @@ describe('test/connection.test.js', () => {
       timeout: 1000,
     }).encode());
 
-    const req = yield conn.await('request');
+    const req = await conn.await('request');
     assert(req && !req.isResponse);
     assert(req.timeout === 1000);
     assert.deepEqual(req.connObj, { foo: 'bar' });
     assert(!req.data);
 
-    yield Promise.all([
+    await Promise.all([
       conn.close(),
       conn.close(), // close second time
       awaitEvent(socket, 'close'),
     ]);
-    yield sleep(100);
+    await sleep(100);
     assert(!conns.has(socket.localPort));
   });
 
-  it('should close connection if decode error', function* () {
+  it('should close connection if decode error', async function() {
     const socket = net.connect(port, '127.0.0.1');
-    yield awaitEvent(socket, 'connect');
-    yield sleep(100);
+    await awaitEvent(socket, 'connect');
+    await sleep(100);
     assert(conns.has(socket.localPort));
 
     socket.write(new Buffer('010000000000000000000001000003e80000000d000000007b22666f6f223a22626172227c', 'hex'));
 
-    yield awaitEvent(socket, 'close');
-    yield sleep(100);
+    await awaitEvent(socket, 'close');
+    await sleep(100);
     assert(!conns.has(socket.localPort));
   });
 });

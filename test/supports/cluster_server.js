@@ -3,8 +3,10 @@
 const cluster = require('cluster');
 const http = require('http');
 const net = require('net');
-const numCPUs = require('os').cpus().length;
+let numCPUs = require('os').cpus().length;
 const APIClientBase = require('../..').APIClientBase;
+
+if (numCPUs <= 1) numCPUs = 2;
 
 function startServer(port) {
   class TestClient extends APIClientBase {
@@ -60,11 +62,15 @@ function startServer(port) {
     });
     setTimeout(() => {
       process.exit(0);
-    }, 2000);
+    }, 10000);
   } else {
     const client = new TestClient();
-    client.ready(() => {
-      console.log(`Worker ${process.pid} client ready, leader: ${client.isClusterClientLeader}`);
+    client.ready(err => {
+      if (err) {
+        console.log(`Worker ${process.pid} client ready failed, leader: ${client.isClusterClientLeader}, errMsg: ${err.message}`);
+      } else {
+        console.log(`Worker ${process.pid} client ready, leader: ${client.isClusterClientLeader}`);
+      }
     });
     let latestVal;
     client.subscribe({ key: 'foo' }, val => {

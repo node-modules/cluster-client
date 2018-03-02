@@ -32,23 +32,23 @@ describe('test/event.test.js', () => {
     }
   }
 
-  before(function* () {
+  before(async function() {
     const server = net.createServer();
-    port = yield cb => {
+    port = await new Promise(resolve => {
       server.listen(0, () => {
         const address = server.address();
         console.log('using port =>', address.port);
         server.close();
-        cb(null, address.port);
+        resolve(address.port);
       });
-    };
+    });
     client = new ClusterClient();
   });
-  after(function* () {
-    yield client.close();
+  after(async function() {
+    await client.close();
   });
 
-  it('should ok', function* () {
+  it('should ok', async function() {
     mm(process, 'emitWarning', err => {
       client.emit('error', err);
     });
@@ -62,7 +62,7 @@ describe('test/event.test.js', () => {
       });
     };
 
-    yield Promise.race([
+    await Promise.race([
       client.await('error'),
       client.await('foo'),
       subscribe(),

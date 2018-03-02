@@ -14,7 +14,7 @@
     "test": "npm run lint && npm run test-local",
     "test-local": "egg-bin test",
     "pkgfiles": "egg-bin pkgfiles --check",
-    "ci": "egg-bin autod --check && npm run pkgfiles && npm run lint && npm run cov",
+    "ci": "npm run autod --check && npm run pkgfiles && npm run lint && npm run cov",
     "contributors": "contributors -f plain -o AUTHORS"
   },
   "repository": {
@@ -32,38 +32,40 @@
   },
   "homepage": "https://github.com/node-modules/cluster-client#readme",
   "dependencies": {
-    "byte": "^1.2.0",
+    "byte": "^1.4.0",
     "co": "^4.6.0",
-    "debug": "^3.0.1",
-    "egg-logger": "^1.6.0",
+    "debug": "^3.1.0",
+    "egg-logger": "^1.6.1",
     "is-type-of": "^1.2.0",
     "json-stringify-safe": "^5.0.1",
-    "long": "^3.2.0",
-    "sdk-base": "^3.3.0",
-    "serialize-json": "^1.0.1",
-    "tcp-base": "^3.0.0",
-    "utility": "^1.12.0"
+    "long": "^4.0.0",
+    "mz-modules": "^2.1.0",
+    "sdk-base": "^3.4.0",
+    "serialize-json": "^1.0.2",
+    "tcp-base": "^3.1.0",
+    "utility": "^1.13.1"
   },
   "devDependencies": {
     "address": "^1.0.3",
-    "autod": "^2.9.0",
+    "autod": "^3.0.1",
     "await-event": "^2.1.0",
     "coffee": "^4.1.0",
     "contributors": "^0.5.1",
-    "egg-bin": "^4.3.3",
+    "egg-bin": "^4.3.7",
     "egg-ci": "^1.8.0",
-    "egg-mock": "^3.12.1",
-    "eslint": "^4.7.1",
-    "eslint-config-egg": "^5.1.1",
+    "egg-mock": "^3.14.1",
+    "eslint": "^4.18.2",
+    "eslint-config-egg": "^7.0.0",
     "mm": "^2.2.0",
-    "mz-modules": "^2.0.0",
+    "mz-modules": "^2.1.0",
     "pedding": "^1.1.0",
-    "spy": "^1.0.0"
+    "spy": "^1.0.0",
+    "webstorm-disable-index": "^1.2.0"
   },
   "engines": {
-    "node": ">= 6.0.0"
+    "node": ">= 8.0.0"
   },
   "ci": {
-    "version": "6, 8"
+    "version": "8, 9"
   }
 }
