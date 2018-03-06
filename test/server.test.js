@@ -15,20 +15,20 @@ describe('test/server.test.js', () => {
       .end(done);
   });
 
-  it('should return null create with same name', function* () {
-    const server1 = yield ClusterServer.create('same-name', 10001);
+  it('should return null create with same name', async function() {
+    const server1 = await ClusterServer.create('same-name', 10001);
     assert(server1);
-    const server2 = yield ClusterServer.create('same-name', 10001);
+    const server2 = await ClusterServer.create('same-name', 10001);
     assert(server2 === null);
-    yield server1.close();
+    await server1.close();
   });
 
-  it('should create success if previous closed by ClusterServer.close', function* () {
-    const server1 = yield ClusterServer.create('previous-closed', 10002);
+  it('should create success if previous closed by ClusterServer.close', async function() {
+    const server1 = await ClusterServer.create('previous-closed', 10002);
     assert(server1);
-    yield ClusterServer.close('previous-closed', server1);
-    const server2 = yield ClusterServer.create('previous-closed', 10002);
+    await ClusterServer.close('previous-closed', server1);
+    const server2 = await ClusterServer.create('previous-closed', 10002);
     assert(server2);
-    yield ClusterServer.close('previous-closed', server1);
+    await ClusterServer.close('previous-closed', server1);
   });
 });

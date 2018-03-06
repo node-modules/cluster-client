@@ -20,18 +20,18 @@ describe('test/close.test.js', () => {
     });
   });
 
-  it('should delegate close ok', function* () {
+  it('should delegate close ok', async function() {
     const leader = cluster(CloseClient, { port })
       .delegate('destroy', 'close')
       .create();
 
-    yield leader.ready();
+    await leader.ready();
     assert(fs.existsSync(path.join(__dirname, `supports/${process.version}.bin`)));
-    yield leader.destroy();
+    await leader.destroy();
     assert(!fs.existsSync(path.join(__dirname, `supports/${process.version}.bin`)));
   });
 
-  it('should APIClient has default close', function* () {
+  it('should APIClient has default close', async function() {
     class APIClient extends cluster.APIClientBase {
       get DataClient() {
         return CloseClient;
@@ -43,8 +43,8 @@ describe('test/close.test.js', () => {
     }
 
     let client = new APIClient();
-    yield client.ready();
-    yield client.close();
+    await client.ready();
+    await client.close();
 
     class APIClient2 extends cluster.APIClientBase {
       get DataClient() {
@@ -57,11 +57,11 @@ describe('test/close.test.js', () => {
     }
 
     client = new APIClient2();
-    yield client.ready();
-    yield client.close();
+    await client.ready();
+    await client.close();
   });
 
-  it('should handle error event after closed', function* () {
+  it('should handle error event after closed', async function() {
     class DataClient extends Base {
       constructor(options) {
         super(options);
@@ -78,16 +78,16 @@ describe('test/close.test.js', () => {
     const leader = cluster(DataClient, { port })
       .create();
 
-    yield leader.ready();
-    yield leader.close();
+    await leader.ready();
+    await leader.close();
 
     try {
-      yield leader.await('error');
+      await leader.await('error');
     } catch (err) {
       assert(err.message === 'mock error');
     }
 
     // close again should work
-    yield leader.close();
+    await leader.close();
   });
 });

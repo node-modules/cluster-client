@@ -15,17 +15,17 @@ describe('test/utils.test.js', () => {
     assert(utils.nextId() === 1);
   });
 
-  it('should callFn ok', function* () {
-    yield utils.callFn(null);
-    const ret = yield utils.callFn(function* (a, b) {
+  it('should callFn ok', async function() {
+    await utils.callFn(null);
+    const ret = await utils.callFn(function* (a, b) {
       return a + b;
     }, [ 1, 2 ]);
     assert(ret === 3);
-    yield utils.callFn(function(a, b) {
+    await utils.callFn(function(a, b) {
       return Promise.resolve(a + b);
     }, [ 1, 2 ]);
     assert(ret === 3);
-    yield utils.callFn(function(a, b) {
+    await utils.callFn(function(a, b) {
       return a + b;
     }, [ 1, 2 ]);
     assert(ret === 3);
