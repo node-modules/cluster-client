@@ -51,6 +51,7 @@ function startServer(port) {
 
   if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
+    const workerSet = new Set();
 
     // Fork workers.
     for (let i = 0; i < numCPUs; i++) {
@@ -60,9 +61,15 @@ function startServer(port) {
     cluster.on('exit', (worker, code, signal) => {
       console.log(`worker ${worker.process.pid} died, code: ${code}, signal: ${signal}`);
     });
-    setTimeout(() => {
-      process.exit(0);
-    }, 10000);
+    cluster.on('message', worker => {
+      workerSet.add(worker.id);
+      if (workerSet.size === numCPUs) {
+        process.exit(0);
+      }
+    });
+    // setTimeout(() => {
+    //   process.exit(0);
+    // }, 10000);
   } else {
     const client = new TestClient();
     client.ready(err => {
@@ -81,6 +88,10 @@ function startServer(port) {
     setInterval(() => {
       client.publish({ key: 'foo', value: 'bar ' + Date() });
     }, 200);
+
+    setTimeout(() => {
+      process.send(cluster.worker.id);
+    }, 5000);
 
     // Workers can share any TCP connection
     // In this case it is an HTTP server
