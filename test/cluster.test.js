@@ -72,7 +72,7 @@ describe('test/cluster.test.js', () => {
 
   it('should work on cluster module', () => {
     return coffee.fork(path.join(__dirname, 'supports/cluster_server.js'))
-      .debug(0)
+      // .debug(0)
       // make sure leader and follower exists
       .expect('stdout', /, leader: true/)
       .expect('stdout', /, leader: false/)

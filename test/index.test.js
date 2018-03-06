@@ -582,38 +582,39 @@ describe('test/index.test.js', () => {
       await client_3.ready();
     });
 
-    after(() => {
-      cluster.close(client_1);
-      cluster.close(client_2);
-      cluster.close(client_3);
+    after(async () => {
+      await cluster.close(client_3);
+      await cluster.close(client_2);
+      await cluster.close(client_1);
     });
 
     it('should re subscribe / publish ok', done => {
       done = pedding(done, 3);
       let trigger_1 = false;
       let trigger_2 = false;
+      let trigger_3 = false;
       client_1.subscribe({
         dataId: 'com.alibaba.dubbo.demo.DemoService',
       }, val => {
+        if (trigger_1) return;
+
+        trigger_1 = true;
         assert(val && val.length > 0);
         console.log('1', val.map(url => url.host));
         assert(val.some(url => url.host === '30.20.78.299:20880'));
-        if (!trigger_1) {
-          trigger_1 = true;
-          done();
-        }
+        done();
       });
 
       client_2.subscribe({
         dataId: 'com.alibaba.dubbo.demo.DemoService',
       }, val => {
+        if (trigger_2) return;
+
+        trigger_2 = true;
         assert(val && val.length > 0);
         console.log('2', val.map(url => url.host));
         assert(val.some(url => url.host === '30.20.78.299:20880'));
-        if (!trigger_2) {
-          trigger_2 = true;
-          done();
-        }
+        done();
       });
 
       client_2.publish({
@@ -642,6 +643,9 @@ describe('test/index.test.js', () => {
         client_3.subscribe({
           dataId: 'com.alibaba.dubbo.demo.DemoService',
         }, val => {
+          if (trigger_3) return;
+
+          trigger_3 = true;
           assert(val && val.length > 0);
           console.log('3', val.map(url => url.host));
           if (val.length === 2) {
