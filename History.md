@@ -1,4 +1,11 @@
 
+2.0.0 / 2018-03-06
+==================
+
+**others**
+  * [[`2574eae`](http://github.com/node-modules/cluster-client/commit/2574eae6fdbe603b74a3c27a57e3b545aec54314)] - [BREAKING] feat: migrating from generators to async/await (#36) (zōng yǔ <<gxcsoccer@users.noreply.github.com>>)
+  * [[`e32f0ef`](http://github.com/node-modules/cluster-client/commit/e32f0eff5fe5dfb4187386d928b2fa8cdc65cfa5)] - chore: release 1.7.1 (xiaochen.gaoxc <<xiaochen.gaoxc@alibaba-inc.com>>),
+
 1.7.1 / 2017-09-21
 ==================
 
