@@ -1,4 +1,10 @@
 
+2.1.0 / 2018-03-26
+==================
+
+**features**
+  * [[`dce3fee`](http://github.com/node-modules/cluster-client/commit/dce3fee89a5c3d617b09e129f3ee68214fa90ccd)] - feat: response with whole error object instead of only stack, message (#38) (killa <<killa123@126.com>>)
+
 2.0.0 / 2018-03-06
 ==================
 
