@@ -181,7 +181,9 @@ describe('test/client.test.js', () => {
 
     async _init() {
       await sleep(1000);
-      throw new Error('mock error');
+      const error = new Error('mock error');
+      error.code = 'ERROR_CODE';
+      throw error;
     }
 
     send(data) {
@@ -232,6 +234,7 @@ describe('test/client.test.js', () => {
       assert(false);
     } catch (err) {
       assert(err && err.message === 'mock error');
+      assert.strictEqual(err.code, 'ERROR_CODE');
     }
 
     const follower = new APIClient();
@@ -241,6 +244,7 @@ describe('test/client.test.js', () => {
       assert(false);
     } catch (err) {
       assert(err && err.message === 'mock error');
+      assert.strictEqual(err.code, 'ERROR_CODE');
     }
 
     await follower.close();
