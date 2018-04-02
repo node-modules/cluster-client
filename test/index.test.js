@@ -560,6 +560,7 @@ describe('test/index.test.js', () => {
       done = pedding(done, 3);
       let trigger_1 = false;
       let trigger_2 = false;
+      let trigger_3 = false;
       client_1.subscribe({
         dataId: 'com.alibaba.dubbo.demo.DemoService',
       }, val => {
@@ -610,6 +611,9 @@ describe('test/index.test.js', () => {
         client_3.subscribe({
           dataId: 'com.alibaba.dubbo.demo.DemoService',
         }, val => {
+          if (trigger_3) return;
+
+          trigger_3 = true;
           assert(val && val.length > 0);
           console.log('3', val.map(url => url.host));
           if (val.length === 2) {
