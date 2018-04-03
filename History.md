@@ -1,4 +1,11 @@
 
+1.7.2 / 2018-04-03
+==================
+
+**others**
+  * [[`102c0f7`](http://github.com/node-modules/cluster-client/commit/102c0f72143a7f1e731686d44be5d20ea21e1a2d)] - [v1.7.x backport] feat: response with whole error object instead of only stack, message (#39) (killa <<killa123@126.com>>)
+  * [[`e32f0ef`](http://github.com/node-modules/cluster-client/commit/e32f0eff5fe5dfb4187386d928b2fa8cdc65cfa5)] - chore: release 1.7.1 (xiaochen.gaoxc <<xiaochen.gaoxc@alibaba-inc.com>>),
+
 1.7.1 / 2017-09-21
 ==================
 
