@@ -99,10 +99,10 @@ describe('test/client.test.js', () => {
       client_1.await('foo_received'),
       client_2.await('foo_received'),
     ];
-    assert(is.array(rs[0]) && rs[0].length === 1);
-    assert(rs[0][0] === 'bar');
-    assert(is.array(rs[1]) && rs[1].length === 1);
-    assert(rs[1][0] === 'bar');
+    assert(is.array(rs[ 0 ]) && rs[ 0 ].length === 1);
+    assert(rs[ 0 ][ 0 ] === 'bar');
+    assert(is.array(rs[ 1 ]) && rs[ 1 ].length === 1);
+    assert(rs[ 1 ][ 0 ] === 'bar');
 
     // unPublish
     client_2.unPublish({ key: 'foo', value: 'bar' });
@@ -111,8 +111,8 @@ describe('test/client.test.js', () => {
       client_1.await('foo_received_1'),
       client_2.await('foo_received_2'),
     ];
-    assert(is.array(rs[0]) && rs[0].length === 0);
-    assert(is.array(rs[1]) && rs[1].length === 0);
+    assert(is.array(rs[ 0 ]) && rs[ 0 ].length === 0);
+    assert(is.array(rs[ 1 ]) && rs[ 1 ].length === 0);
 
     // unSubscribe
     client_1.unSubscribe({ key: 'foo' }, listener_1);
@@ -125,13 +125,17 @@ describe('test/client.test.js', () => {
       function* () {
         yield new Promise((resolve, reject) => {
           setTimeout(resolve, 3000);
-          client_1.once('foo_received_1', () => { reject(new Error('should not run here')); });
+          client_1.once('foo_received_1', () => {
+            reject(new Error('should not run here'));
+          });
         });
       },
       function* () {
         yield new Promise((resolve, reject) => {
           setTimeout(resolve, 3000);
-          client_2.once('foo_received_2', () => { reject(new Error('should not run here')); });
+          client_2.once('foo_received_2', () => {
+            reject(new Error('should not run here'));
+          });
         });
       },
     ];
@@ -145,13 +149,17 @@ describe('test/client.test.js', () => {
       function* () {
         yield new Promise((resolve, reject) => {
           setTimeout(resolve, 3000);
-          client_1.once('foo_received', () => { reject(new Error('should not run here')); });
+          client_1.once('foo_received', () => {
+            reject(new Error('should not run here'));
+          });
         });
       },
       function* () {
         yield new Promise((resolve, reject) => {
           setTimeout(resolve, 3000);
-          client_2.once('foo_received', () => { reject(new Error('should not run here')); });
+          client_2.once('foo_received', () => {
+            reject(new Error('should not run here'));
+          });
         });
       },
     ];
@@ -183,14 +191,22 @@ describe('test/client.test.js', () => {
   class ErrorClient extends Base {
     constructor() {
       super({ initMethod: '_init' });
+      this.data = '';
     }
 
     * _init() {
-      throw new Error('mock error');
+      yield sleep(1000);
+      const error = new Error('mock error');
+      error.code = 'ERROR_CODE';
+      throw error;
     }
 
     send(data) {
       console.log('send', data);
+    }
+
+    * getData() {
+      return this.data;
     }
   }
 
@@ -219,7 +235,35 @@ describe('test/client.test.js', () => {
     send(data) {
       this._client.send(data);
     }
+
+    * getData() {
+      return yield this._client.getData();
+    }
   }
+
+  it('should invoke with ready err', function* () {
+    const leader = new APIClient();
+    try {
+      yield leader.getData();
+      assert(false);
+    } catch (err) {
+      assert(err && err.message === 'mock error');
+      assert.strictEqual(err.code, 'ERROR_CODE');
+    }
+
+    const follower = new APIClient();
+
+    try {
+      yield follower.getData();
+      assert(false);
+    } catch (err) {
+      assert(err && err.message === 'mock error');
+      assert.strictEqual(err.code, 'ERROR_CODE');
+    }
+
+    yield follower.close();
+    yield follower.close();
+  });
 
   it('invokeOneway + ready error', function* () {
     const client = new APIClient();
