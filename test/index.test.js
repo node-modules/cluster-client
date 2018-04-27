@@ -11,11 +11,14 @@ const assert = require('assert');
 const pedding = require('pedding');
 const serverMap = global.serverMap;
 const symbols = require('../lib/symbol');
+const ClusterServer = require('../lib/server');
 const NotifyClient = require('./supports/notify_client');
 const RegistryClient = require('./supports/registry_client');
 const portDelta = Number(process.versions.node.slice(0, 1));
 
 describe('test/index.test.js', () => {
+
+  afterEach(mm.restore);
 
   describe('RegistryClient', () => {
     const port = 8880 + portDelta;
@@ -633,12 +636,29 @@ describe('test/index.test.js', () => {
   describe('wait for Leader', () => {
     const port = 2220 + portDelta;
 
-    it('should subscribe ok', done => {
+    it('should follower ready failed for can not connect to leader', done => {
       const follower = cluster(RegistryClient, { port, isLeader: false, maxWaitTime: 3000 }).create(4322, '224.5.6.9');
       follower.once('error', err => {
-        assert(err.message === `[ClusterClient] leader does not be active in 3000ms on port:${port}`);
+        assert(err.message === `connect ECONNREFUSED 127.0.0.1:${port}`);
+        follower.close();
         done();
       });
+    });
+  });
+
+  describe('connect timeout', () => {
+    it('should connect timeout', function* () {
+      const orginalConnect = net.connect;
+      mm(net, 'connect', function(port) {
+        return orginalConnect.call(net, port, '2.2.2.2');
+      });
+      try {
+        yield ClusterServer.tryToConnect(30000);
+        assert(false);
+      } catch (err) {
+        assert(err.name === 'ClusterClientConnectTimeoutError');
+        assert(err.message === 'socket#127.0.0.1:30000 connect timeout(1000ms)');
+      }
     });
   });
 
