@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "autod": "autod",
-    "lint": "eslint . --ext .js --fix",
+    "lint": "eslint . --ext .js",
     "cov": "egg-bin cov",
     "test": "npm run lint && npm run test-local",
     "test-local": "egg-bin test",
