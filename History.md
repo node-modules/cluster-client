@@ -1,4 +1,10 @@
 
+1.7.3 / 2018-04-28
+==================
+
+**fixes**
+  * [[`ddb2b86`](http://github.com/node-modules/cluster-client/commit/ddb2b86ff3b90213220fffa486d188852c85e227)] - fix: add connect timeout & logger connect error (#40) (zōng yǔ <<gxcsoccer@users.noreply.github.com>>)
+
 1.7.2 / 2018-04-03
 ==================
 
