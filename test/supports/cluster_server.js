@@ -91,7 +91,7 @@ function startServer(port) {
 
     setTimeout(() => {
       process.send(cluster.worker.id);
-    }, 5000);
+    }, 2000);
 
     // Workers can share any TCP connection
     // In this case it is an HTTP server
