@@ -59,7 +59,6 @@
     "eslint": "^4.19.1",
     "eslint-config-egg": "^7.0.0",
     "mm": "^2.2.0",
-    "mz-modules": "^2.1.0",
     "pedding": "^1.1.0",
     "spy": "^1.0.0"
   },
