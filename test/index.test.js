@@ -637,9 +637,9 @@ describe('test/index.test.js', () => {
     const port = 2220 + portDelta;
 
     it('should follower ready failed for can not connect to leader', done => {
-      const follower = cluster(RegistryClient, { port, isLeader: false, maxWaitTime: 3000 }).create(4322, '224.5.6.9');
+      const follower = cluster(RegistryClient, { port, isLeader: false, maxWaitTime: 3000, connectTimeout: 1000 }).create(4322, '224.5.6.9');
       follower.once('error', err => {
-        assert(err.message === `connect ECONNREFUSED 127.0.0.1:${port}`);
+        assert(err.message === `[ClusterClient:RegistryClient] follower try to connect leader failed, cause by connect ECONNREFUSED 127.0.0.1:${port}`);
         follower.close();
         done();
       });
@@ -654,6 +654,13 @@ describe('test/index.test.js', () => {
       });
       try {
         yield ClusterServer.tryToConnect(30000);
+        assert(false);
+      } catch (err) {
+        assert(err.name === 'ClusterClientConnectTimeoutError');
+        assert(err.message === 'socket#127.0.0.1:30000 connect timeout(5000ms)');
+      }
+      try {
+        yield ClusterServer.tryToConnect(30000, 1000);
         assert(false);
       } catch (err) {
         assert(err.name === 'ClusterClientConnectTimeoutError');
