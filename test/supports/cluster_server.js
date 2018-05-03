@@ -57,6 +57,7 @@ function startServer(port) {
     for (let i = 0; i < numCPUs; i++) {
       cluster.fork();
     }
+    console.log('fork ' + numCPUs + ' workers');
 
     cluster.on('exit', (worker, code, signal) => {
       console.log(`worker ${worker.process.pid} died, code: ${code}, signal: ${signal}`);
