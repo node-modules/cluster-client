@@ -1,4 +1,10 @@
 
+1.7.4 / 2018-05-03
+==================
+
+**fixes**
+  * [[`489d908`](http://github.com/node-modules/cluster-client/commit/489d908ec749282fde471d244536fddc5f6d3db4)] - fix: adjust socket connect timeout (#42) (zōng yǔ <<gxcsoccer@users.noreply.github.com>>)
+
 1.7.3 / 2018-04-28
 ==================
 
