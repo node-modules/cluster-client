@@ -726,7 +726,7 @@ describe('test/index.test.js', () => {
         cluster(NotifyClient)
           .delegate('not-exist')
           .create();
-      }, '[ClusterClient] api: not-exist not implement in client');
+      }, /\[ClusterClient\] api\: not-exist not implement in client/);
     });
   });
 });
