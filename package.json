@@ -10,11 +10,11 @@
   "scripts": {
     "autod": "autod",
     "lint": "eslint . --ext .js",
-    "cov": "egg-bin cov",
+    "cov": "TEST_TIMEOUT=20000 egg-bin cov",
     "test": "npm run lint && npm run test-local",
     "test-local": "egg-bin test",
     "pkgfiles": "egg-bin pkgfiles --check",
-    "ci": "npm run autod --check && npm run pkgfiles && npm run lint && npm run cov",
+    "ci": "npm run autod -- --check && npm run pkgfiles && npm run lint && npm run cov",
     "contributors": "contributors -f plain -o AUTHORS"
   },
   "repository": {
@@ -66,6 +66,6 @@
     "node": ">= 8.0.0"
   },
   "ci": {
-    "version": "8, 9"
+    "version": "8, 10"
   }
 }
