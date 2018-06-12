@@ -1,4 +1,10 @@
 
+2.1.1 / 2018-06-12
+==================
+
+**fixes**
+  * [[`9fe3849`](http://github.com/node-modules/cluster-client/commit/9fe38494d41afca76491c78cf54b2717508f94b9)] - fix: follower should not retry register channel if socket already disconnected (#43) (zōng yǔ <<gxcsoccer@users.noreply.github.com>>)
+
 2.1.0 / 2018-03-26
 ==================
 
