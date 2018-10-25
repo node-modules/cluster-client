@@ -10,7 +10,7 @@
   "scripts": {
     "autod": "autod",
     "lint": "eslint . --ext .js",
-    "cov": "egg-bin cov",
+    "cov": "TEST_TIMEOUT=10000 egg-bin cov",
     "test": "npm run lint && npm run test-local",
     "test-local": "egg-bin test",
     "pkgfiles": "egg-bin pkgfiles --check",
@@ -31,6 +31,9 @@
     "url": "https://github.com/node-modules/cluster-client/issues"
   },
   "homepage": "https://github.com/node-modules/cluster-client#readme",
+  "publishConfig": {
+    "tag": "latest-1"
+  },
   "dependencies": {
     "await-first": "^1.0.0",
     "byte": "^1.4.0",
@@ -66,6 +69,6 @@
     "node": ">= 6.0.0"
   },
   "ci": {
-    "version": "6, 8"
+    "version": "6, 8, 10"
   }
 }
