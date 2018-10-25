@@ -1,4 +1,10 @@
 
+1.7.5 / 2018-10-25
+==================
+
+**fixes**
+  * [[`2fd3b65`](http://github.com/node-modules/cluster-client/commit/2fd3b655908b9ffcbc46318d20fc8ebe16725bf9)] - fix: remove follower connect timeout warning (#45) (zōng yǔ <<gxcsoccer@users.noreply.github.com>>)
+
 1.7.4 / 2018-05-03
 ==================
 
