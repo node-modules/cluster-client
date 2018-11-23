@@ -1,4 +1,10 @@
 
+2.1.2 / 2018-11-23
+==================
+
+**others**
+  * [[`4c5093b`](http://github.com/node-modules/cluster-client/commit/4c5093b878ee8018524b1b0a514865e647a8f38c)] - chore: upgrade deps (#47) (zōng yǔ <<gxcsoccer@users.noreply.github.com>>)
+
 2.1.1 / 2018-06-12
 ==================
 
