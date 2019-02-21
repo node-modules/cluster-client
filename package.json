@@ -34,8 +34,8 @@
   "dependencies": {
     "byte": "^2.0.0",
     "co": "^4.6.0",
-    "debug": "^4.1.0",
-    "egg-logger": "^2.0.3",
+    "debug": "^4.1.1",
+    "egg-logger": "^2.3.1",
     "is-type-of": "^1.2.1",
     "json-stringify-safe": "^5.0.1",
     "long": "^4.0.0",
@@ -49,12 +49,12 @@
     "address": "^1.0.3",
     "autod": "^3.0.1",
     "await-event": "^2.1.0",
-    "coffee": "^5.1.0",
+    "coffee": "^5.2.1",
     "contributors": "^0.5.1",
-    "egg-bin": "^4.9.0",
+    "egg-bin": "^4.11.0",
     "egg-ci": "^1.8.0",
-    "egg-mock": "^3.20.1",
-    "eslint": "^5.9.0",
+    "egg-mock": "^3.21.0",
+    "eslint": "^5.14.1",
     "eslint-config-egg": "^7.1.0",
     "mm": "^2.4.1",
     "mz-modules": "^2.1.0",
@@ -63,7 +63,7 @@
     "webstorm-disable-index": "^1.2.0"
   },
   "engines": {
-    "node": ">= 8.0.0"
+    "node": ">=8.0.0"
   },
   "ci": {
     "version": "8, 10"

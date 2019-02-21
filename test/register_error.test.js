@@ -45,7 +45,7 @@ describe('test/register_error.test.js', () => {
   it('should handle register_channel request in leader', async function() {
     mm(Response.prototype, 'encode', function() {
       mm.restore();
-      return new Buffer('01010000000000000000000000000bb80000001f000000007b2274797065223a2272656769737465725f6368616e6e656c5f726573227d', 'hex');
+      return Buffer.from('01010000000000000000000000000bb80000001f000000007b2274797065223a2272656769737465725f6368616e6e656c5f726573227d', 'hex');
     });
 
     const leader = cluster(Client, { port }).create();

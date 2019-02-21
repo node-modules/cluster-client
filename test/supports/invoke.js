@@ -11,24 +11,24 @@ const client = cluster(NotifyClient, {
   transcode: {
     encode(obj) {
       if (is.date(obj)) {
-        return new Buffer(JSON.stringify({
+        return Buffer.from(JSON.stringify({
           type: 'date',
           data: obj.getTime(),
         }));
       } else if (is.buffer(obj)) {
-        return new Buffer(JSON.stringify({
+        return Buffer.from(JSON.stringify({
           type: 'buffer',
           data: obj.toString('hex'),
         }));
       }
-      return new Buffer(JSON.stringify(obj));
+      return Buffer.from(JSON.stringify(obj));
     },
     decode(buf) {
       const obj = JSON.parse(buf);
       if (obj.type === 'date') {
         return new Date(obj.data);
       } else if (obj.type === 'buffer') {
-        return new Buffer(obj.data, 'hex');
+        return Buffer.from(obj.data, 'hex');
       }
       return obj;
     },
@@ -41,7 +41,7 @@ co(function* () {
 
   let ret = yield client.commit('123', new Date());
   assert(is.date(ret));
-  ret = yield client.commit('123', new Buffer('hello'));
+  ret = yield client.commit('123', Buffer.from('hello'));
   assert(is.buffer(ret) && ret.toString() === 'hello');
   ret = yield client.commit('123', { name: 'peter' });
   assert(is.object(ret) && ret.name === 'peter');

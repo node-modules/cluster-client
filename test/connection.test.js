@@ -102,7 +102,7 @@ describe('test/connection.test.js', () => {
     await sleep(100);
     assert(conns.has(socket.localPort));
 
-    socket.write(new Buffer('010000000000000000000001000003e80000000d000000007b22666f6f223a22626172227c', 'hex'));
+    socket.write(Buffer.from('010000000000000000000001000003e80000000d000000007b22666f6f223a22626172227c', 'hex'));
 
     await awaitEvent(socket, 'close');
     await sleep(100);

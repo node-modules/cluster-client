@@ -1,9 +1,9 @@
 'use strict';
 
 const assert = require('assert');
+const is = require('is-type-of');
 const cluster = require('./lib');
 const symbols = require('./lib/symbol');
-const ClusterClient = require('./lib/client');
 const APIClientBase = require('./lib/api_client');
 
 /**
@@ -22,7 +22,7 @@ module.exports = cluster;
  * @return {Promise} returns a promise which will be resolved after fully closed
  */
 module.exports.close = client => {
-  assert(client instanceof ClusterClient, '[cluster#close] client should be instanceof ClusterClient');
+  assert(is.function(client[symbols.close]), '[cluster#close] client should be instanceof ClusterClient');
   return client[symbols.close]();
 };
 

@@ -87,7 +87,7 @@ class RegistryClient extends Base {
       return;
     }
 
-    const buf = new Buffer(msg);
+    const buf = Buffer.from(msg);
     this._socket.send(
       buf,
       0,

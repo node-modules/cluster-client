@@ -49,176 +49,194 @@ describe('test/index.test.js', () => {
     server.close();
   });
 
-  describe('RegistryClient', () => {
-    const port = 8880 + portDelta;
-    let leader;
-    let follower;
-    beforeEach(() => {
-      leader = cluster(RegistryClient, { port, isLeader: true })
-        .delegate('subscribe', 'subscribe')
-        .delegate('publish', 'publish')
-        .override('foo', 'bar')
-        .create();
-      follower = cluster(RegistryClient, { port, isLeader: false }).create();
-    });
+  [
+    [ 'cluster', false ],
+    [ 'single', true ],
+  ].forEach(item => {
+    const scence = item[0];
+    const singleMode = item[1];
+    describe(scence, () => {
+      describe('RegistryClient', () => {
+        const port = 8880 + portDelta;
+        let leader;
+        let follower;
+        beforeEach(() => {
+          leader = cluster(RegistryClient, { port, isLeader: true, singleMode })
+            .delegate('subscribe', 'subscribe')
+            .delegate('publish', 'publish')
+            .override('foo', 'bar')
+            .create();
+          follower = cluster(RegistryClient, { port, isLeader: false, singleMode }).create();
+        });
 
-    afterEach(async function() {
-      assert(serverMap.has(port) === true);
-      await Promise.race([
-        cluster.close(follower),
-        follower.await('error'),
-      ]);
-      await Promise.race([
-        cluster.close(leader),
-        leader.await('error'),
-      ]);
-      assert(leader[symbols.innerClient]._realClient.closed === true); // make sure real client is closed
-      assert(serverMap.has(port) === false); // make sure net.Server is closed
-    });
+        afterEach(async function() {
+          if (scence === 'cluster') {
+            assert(serverMap.has(port) === true);
+          }
+          await Promise.race([
+            cluster.close(follower),
+            follower.await('error'),
+          ]);
+          await Promise.race([
+            cluster.close(leader),
+            leader.await('error'),
+          ]);
+          if (scence === 'cluster') {
+            assert(leader[symbols.innerClient]._realClient.closed === true); // make sure real client is closed
+          } else {
+            assert(leader[symbols.innerClient].closed === true);
+          }
+          assert(!serverMap.has(port)); // make sure net.Server is closed
+        });
 
-    it('should have subscribe/publish method', () => {
-      assert(is.function(leader.subscribe));
-      assert(is.function(leader.publish));
-      assert(is.function(follower.subscribe));
-      assert(is.function(follower.publish));
-      assert(leader.foo === 'bar');
-    });
+        it('should have subscribe/publish method', () => {
+          assert(is.function(leader.subscribe));
+          assert(is.function(leader.publish));
+          assert(is.function(follower.subscribe));
+          assert(is.function(follower.publish));
+          assert(leader.foo === 'bar');
+        });
 
-    it('should subscribe ok', done => {
-      done = pedding(done, 3);
-      let leader_trigger = false;
-      let follower_trigger = false;
-      let follower_trigger_2 = false;
+        it('should subscribe ok', done => {
+          done = pedding(done, 3);
+          let leader_trigger = false;
+          let follower_trigger = false;
+          let follower_trigger_2 = false;
 
-      leader.subscribe({
-        dataId: 'com.alibaba.dubbo.demo.DemoService',
-      }, val => {
-        assert(val && val.length > 0);
-        if (val.length === 2 && !leader_trigger) {
-          assert(val.some(url => url.host === '30.20.78.299:20880'));
-          assert(val.some(url => url.host === '30.20.78.300:20880'));
-          leader_trigger = true;
-          done();
-        }
-      });
+          leader.subscribe({
+            dataId: 'com.alibaba.dubbo.demo.DemoService',
+          }, val => {
+            assert(val && val.length > 0);
+            if (val.length === 2 && !leader_trigger) {
+              assert(val.some(url => url.host === '30.20.78.299:20880'));
+              assert(val.some(url => url.host === '30.20.78.300:20880'));
+              leader_trigger = true;
+              done();
+            }
+          });
 
-      follower.subscribe({
-        dataId: 'com.alibaba.dubbo.demo.DemoService',
-      }, val => {
-        assert(val && val.length > 0);
-        if (val.length === 2 && !follower_trigger) {
-          assert(val.some(url => url.host === '30.20.78.299:20880'));
-          assert(val.some(url => url.host === '30.20.78.300:20880'));
-          follower_trigger = true;
-          done();
-        }
-      });
+          follower.subscribe({
+            dataId: 'com.alibaba.dubbo.demo.DemoService',
+          }, val => {
+            assert(val && val.length > 0);
+            if (val.length === 2 && !follower_trigger) {
+              assert(val.some(url => url.host === '30.20.78.299:20880'));
+              assert(val.some(url => url.host === '30.20.78.300:20880'));
+              follower_trigger = true;
+              done();
+            }
+          });
 
-      setTimeout(() => {
-        // double subscribe
-        follower.subscribe({
-          dataId: 'com.alibaba.dubbo.demo.DemoService',
-        }, val => {
-          assert(val && val.length > 0);
-          if (val.length === 2 && !follower_trigger_2) {
-            assert(val.some(url => url.host === '30.20.78.299:20880'));
-            assert(val.some(url => url.host === '30.20.78.300:20880'));
-            follower_trigger_2 = true;
-            done();
+          setTimeout(() => {
+            // double subscribe
+            follower.subscribe({
+              dataId: 'com.alibaba.dubbo.demo.DemoService',
+            }, val => {
+              assert(val && val.length > 0);
+              if (val.length === 2 && !follower_trigger_2) {
+                assert(val.some(url => url.host === '30.20.78.299:20880'));
+                assert(val.some(url => url.host === '30.20.78.300:20880'));
+                follower_trigger_2 = true;
+                done();
+              }
+            });
+          }, 3000);
+
+          leader.publish({
+            dataId: 'com.alibaba.dubbo.demo.DemoService',
+            publishData: 'dubbo://30.20.78.299:20880/com.alibaba.dubbo.demo.DemoService?anyhost=true&application=demo-provider&dubbo=2.0.0&generic=false&interface=com.alibaba.dubbo.demo.DemoService&loadbalance=roundrobin&methods=sayHello&owner=william&pid=81281&side=provider&timestamp=1481613276143',
+          });
+          follower.publish({
+            dataId: 'com.alibaba.dubbo.demo.DemoService',
+            publishData: 'dubbo://30.20.78.300:20880/com.alibaba.dubbo.demo.DemoService?anyhost=true&application=demo-provider&dubbo=2.0.0&generic=false&interface=com.alibaba.dubbo.demo.DemoService&loadbalance=roundrobin&methods=sayHello&owner=william&pid=81281&side=provider&timestamp=1481613276143',
+          });
+        });
+
+        if (scence === 'single') return;
+
+        it('should should not close net.Server if other client is using same port', async function() {
+          class AnotherClient extends Base {
+            constructor() {
+              super();
+              this.ready(true);
+            }
+          }
+          const anotherleader = cluster(AnotherClient, { port, isLeader: true }).create();
+          await anotherleader.ready();
+
+          // assert has problem with global scope virable
+          // assert(serverMap.has(port) === true);
+          if (!serverMap.has(port)) throw new Error();
+          await cluster.close(anotherleader);
+
+          // leader is using the same port, so anotherleader.close should not close the net.Server
+          if (!serverMap.has(port)) throw new Error();
+        });
+
+        it('should realClient.close be a generator function ok', async function() {
+          class RealClientWithGeneratorClose extends Base {
+            constructor() {
+              super();
+              this.ready(true);
+            }
+
+            * close() {
+              this.closed = true;
+            }
+          }
+          const anotherleader = cluster(RealClientWithGeneratorClose, { port, isLeader: true }).create();
+          await anotherleader.ready();
+          await cluster.close(anotherleader);
+          // make sure real client is closed;
+          // assert has problem with global scope virable
+          if (anotherleader[symbols.innerClient]._realClient.closed !== true) {
+            throw new Error();
           }
         });
-      }, 3000);
 
-      leader.publish({
-        dataId: 'com.alibaba.dubbo.demo.DemoService',
-        publishData: 'dubbo://30.20.78.299:20880/com.alibaba.dubbo.demo.DemoService?anyhost=true&application=demo-provider&dubbo=2.0.0&generic=false&interface=com.alibaba.dubbo.demo.DemoService&loadbalance=roundrobin&methods=sayHello&owner=william&pid=81281&side=provider&timestamp=1481613276143',
+        it('should realClient.close be a normal function ok', async function() {
+          class RealClientWithNormalClose extends Base {
+            constructor() {
+              super();
+              this.ready(true);
+            }
+            close() {
+              this.closed = true;
+            }
+          }
+          const anotherleader = cluster(RealClientWithNormalClose, { port, isLeader: true }).create();
+          await anotherleader.ready();
+          await cluster.close(anotherleader);
+          // make sure real client is closed;
+          // assert has problem with global scope virable
+          if (anotherleader[symbols.innerClient]._realClient.closed !== true) {
+            throw new Error();
+          }
+        });
+
+        it('should realClient.close be a function returning promise ok', async function() {
+          class RealClientWithCloseReturningPromise extends Base {
+            constructor() {
+              super();
+              this.ready(true);
+            }
+            close() {
+              this.closed = true;
+            }
+          }
+          const anotherleader = cluster(RealClientWithCloseReturningPromise, { port, isLeader: true }).create();
+          await anotherleader.ready();
+          await cluster.close(anotherleader);
+          // make sure real client is closed;
+          // assert has problem with global scope virable
+          if (anotherleader[symbols.innerClient]._realClient.closed !== true) {
+            throw new Error();
+          }
+        });
       });
-      follower.publish({
-        dataId: 'com.alibaba.dubbo.demo.DemoService',
-        publishData: 'dubbo://30.20.78.300:20880/com.alibaba.dubbo.demo.DemoService?anyhost=true&application=demo-provider&dubbo=2.0.0&generic=false&interface=com.alibaba.dubbo.demo.DemoService&loadbalance=roundrobin&methods=sayHello&owner=william&pid=81281&side=provider&timestamp=1481613276143',
-      });
-    });
-
-    it('should should not close net.Server if other client is using same port', async function() {
-      class AnotherClient extends Base {
-        constructor() {
-          super();
-          this.ready(true);
-        }
-      }
-      const anotherleader = cluster(AnotherClient, { port, isLeader: true }).create();
-      await anotherleader.ready();
-
-      // assert has problem with global scope virable
-      // assert(serverMap.has(port) === true);
-      if (!serverMap.has(port)) throw new Error();
-      await cluster.close(anotherleader);
-
-      // leader is using the same port, so anotherleader.close should not close the net.Server
-      if (!serverMap.has(port)) throw new Error();
-    });
-
-    it('should realClient.close be a generator function ok', async function() {
-      class RealClientWithGeneratorClose extends Base {
-        constructor() {
-          super();
-          this.ready(true);
-        }
-
-        * close() {
-          this.closed = true;
-        }
-      }
-      const anotherleader = cluster(RealClientWithGeneratorClose, { port, isLeader: true }).create();
-      await anotherleader.ready();
-      await cluster.close(anotherleader);
-      // make sure real client is closed;
-      // assert has problem with global scope virable
-      if (anotherleader[symbols.innerClient]._realClient.closed !== true) {
-        throw new Error();
-      }
-    });
-
-    it('should realClient.close be a normal function ok', async function() {
-      class RealClientWithNormalClose extends Base {
-        constructor() {
-          super();
-          this.ready(true);
-        }
-        close() {
-          this.closed = true;
-        }
-      }
-      const anotherleader = cluster(RealClientWithNormalClose, { port, isLeader: true }).create();
-      await anotherleader.ready();
-      await cluster.close(anotherleader);
-      // make sure real client is closed;
-      // assert has problem with global scope virable
-      if (anotherleader[symbols.innerClient]._realClient.closed !== true) {
-        throw new Error();
-      }
-    });
-
-    it('should realClient.close be a function returning promise ok', async function() {
-      class RealClientWithCloseReturningPromise extends Base {
-        constructor() {
-          super();
-          this.ready(true);
-        }
-        close() {
-          this.closed = true;
-        }
-      }
-      const anotherleader = cluster(RealClientWithCloseReturningPromise, { port, isLeader: true }).create();
-      await anotherleader.ready();
-      await cluster.close(anotherleader);
-      // make sure real client is closed;
-      // assert has problem with global scope virable
-      if (anotherleader[symbols.innerClient]._realClient.closed !== true) {
-        throw new Error();
-      }
     });
   });
+
 
   describe('heartbeat', () => {
     it('should close connection if long time no heartbeat', done => {
@@ -457,9 +475,9 @@ describe('test/index.test.js', () => {
     const transcode = {
       encode(urls) {
         if (Array.isArray(urls)) {
-          return new Buffer(JSON.stringify(urls.map(url => url.href)));
+          return Buffer.from(JSON.stringify(urls.map(url => url.href)));
         }
-        return new Buffer(JSON.stringify(urls));
+        return Buffer.from(JSON.stringify(urls));
       },
       decode(buf) {
         const arr = JSON.parse(buf);
@@ -478,6 +496,7 @@ describe('test/index.test.js', () => {
       leader.subscribe({
         dataId: 'com.alibaba.dubbo.demo.DemoService',
       }, val => {
+        console.log('leader', val.map(item => item.host));
         assert(val && val.length > 0);
         if (val.length === 2) {
           assert(val.every(url => url instanceof URL.Url));
@@ -490,6 +509,7 @@ describe('test/index.test.js', () => {
       follower.subscribe({
         dataId: 'com.alibaba.dubbo.demo.DemoService',
       }, val => {
+        console.log('follower', val.map(item => item.host));
         assert(val && val.length > 0);
         if (val.length === 2) {
           assert(val.every(url => url instanceof URL.Url));
