@@ -1,4 +1,10 @@
 
+3.0.0 / 2019-02-26
+==================
+
+**features**
+  * [[`7f3765d`](http://github.com/node-modules/cluster-client/commit/7f3765ded8877758c9a0bf0c1b23ab4e2c932c21)] - feat: support cpu single mode (#48) (zōng yǔ <<gxcsoccer@users.noreply.github.com>>)
+
 2.1.2 / 2018-11-23
 ==================
 
