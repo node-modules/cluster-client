@@ -41,7 +41,7 @@ class Client extends Base {
       arr.splice(index, 1);
     }
     this.registerInfo.set(reg.key, arr);
-    this.emit(reg.key, arr);
+    process.nextTick(() => { this.emit(reg.key, arr); });
   }
 
   close() {

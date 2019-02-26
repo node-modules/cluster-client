@@ -72,6 +72,7 @@ function startServer(port) {
     // }, 10000);
   } else {
     const client = new TestClient();
+    console.log('NODE_CLUSTER_CLIENT_SINGLE_MODE =>', process.env.NODE_CLUSTER_CLIENT_SINGLE_MODE);
     client.ready(err => {
       if (err) {
         console.log(`Worker ${process.pid} client ready failed, leader: ${client.isClusterClientLeader}, errMsg: ${err.message}`);
