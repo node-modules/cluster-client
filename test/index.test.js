@@ -81,11 +81,7 @@ describe('test/index.test.js', () => {
             cluster.close(leader),
             leader.await('error'),
           ]);
-          if (scence === 'cluster') {
-            assert(leader[symbols.innerClient]._realClient.closed === true); // make sure real client is closed
-          } else {
-            assert(leader[symbols.innerClient].closed === true);
-          }
+          assert(leader[symbols.innerClient]._realClient.closed === true); // make sure real client is closed
           assert(!serverMap.has(port)); // make sure net.Server is closed
         });
 

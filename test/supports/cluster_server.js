@@ -3,10 +3,10 @@
 const cluster = require('cluster');
 const http = require('http');
 const net = require('net');
-let numCPUs = require('os').cpus().length;
+// let numCPUs = require('os').cpus().length;
 const APIClientBase = require('../..').APIClientBase;
 
-if (numCPUs <= 1) numCPUs = 2;
+const numCPUs = 2;
 
 function startServer(port) {
   class TestClient extends APIClientBase {
