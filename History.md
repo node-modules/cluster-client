@@ -1,4 +1,10 @@
 
+3.0.1 / 2019-03-01
+==================
+
+**fixes**
+  * [[`6f9bf8e`](http://github.com/node-modules/cluster-client/commit/6f9bf8e300386f28c2a208aa8c394d441045c03c)] - fix: single mode bugs (#49) (zōng yǔ <<gxcsoccer@users.noreply.github.com>>)
+
 3.0.0 / 2019-02-26
 ==================
 
