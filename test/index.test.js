@@ -684,7 +684,7 @@ describe('test/index.test.js', () => {
     it('should subscribe ok', done => {
       const follower = cluster(RegistryClient, { port, isLeader: false, maxWaitTime: 3000 }).create(4322, '224.5.6.9');
       follower.once('error', err => {
-        assert(err.message === `[ClusterClient] leader does not be active in 3000ms on port:${port}`);
+        assert(err.message === `[ClusterClient] leader of RegistryClient does not be active in 3000ms on port:${port}`);
         done();
       });
     });

@@ -3,7 +3,6 @@
 const cluster = require('cluster');
 const http = require('http');
 const net = require('net');
-// let numCPUs = require('os').cpus().length;
 const APIClientBase = require('../..').APIClientBase;
 
 const numCPUs = 2;
@@ -23,7 +22,7 @@ function startServer(port) {
     get clusterOptions() {
       return {
         port,
-        responseTimeout: 1000,
+        responseTimeout: 100,
         name: `cluster-server-test-${process.version}`,
       };
     }
@@ -64,7 +63,7 @@ function startServer(port) {
     cluster.on('message', worker => {
       workerSet.add(worker.id);
       if (workerSet.size === numCPUs) {
-        process.exit(0);
+        setTimeout(() => { process.exit(0); }, 2000);
       }
     });
     // setTimeout(() => {
@@ -105,11 +104,12 @@ function startServer(port) {
 }
 
 const server = net.createServer();
-server.listen(0, () => {
-  const address = server.address();
-  console.log('using port =>', address.port);
-  server.close();
+server.listen(0);
+server.on('listening', () => {
+  const port = server.address().port;
+  console.log('using port =>', port);
   setTimeout(() => {
-    startServer(address.port);
+    startServer(port);
+    server.close();
   }, 100);
 });
