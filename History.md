@@ -1,4 +1,10 @@
 
+3.1.0 / 2021-11-21
+==================
+
+**features**
+  * [[`a21dde4`](http://github.com/node-modules/cluster-client/commit/a21dde4e7e20b232fe62c44266a0391b4eb4e46a)] - feat: connectTimeout support env, default 10s (#55) (mansonchor.github.com <<mansonchor1987@gmail.com>>)
+
 3.0.1 / 2019-03-01
 ==================
 
