@@ -1,4 +1,10 @@
 
+3.1.1 / 2022-06-22
+==================
+
+**fixes**
+  * [[`f4cc11b`](http://github.com/node-modules/cluster-client/commit/f4cc11bb539f58cc4926f1ce10db6b4ae1e7769c)] - fix: subscribe is not working on single thread mode (#51) (钟典 Desmond <<z@limme.net>>)
+
 3.1.0 / 2021-11-21
 ==================
 
