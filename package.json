@@ -10,7 +10,7 @@
   "scripts": {
     "autod": "autod",
     "lint": "eslint . --ext .js",
-    "cov": "TEST_TIMEOUT=20000 egg-bin cov",
+    "cov": "egg-bin cov --timeout 20000",
     "test": "npm run lint && npm run test-local",
     "test-local": "egg-bin test",
     "pkgfiles": "egg-bin pkgfiles --check",
@@ -67,6 +67,6 @@
     "node": ">=8.0.0"
   },
   "ci": {
-    "version": "8, 10"
+    "version": "8, 10, 12, 14, 16"
   }
 }

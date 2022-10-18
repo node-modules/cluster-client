@@ -23,7 +23,7 @@ function startServer(port) {
     get clusterOptions() {
       return {
         port,
-        responseTimeout: 1000,
+        responseTimeout: 10000,
         name: `cluster-server-test-${process.version}`,
       };
     }
@@ -55,7 +55,9 @@ function startServer(port) {
 
     // Fork workers.
     for (let i = 0; i < numCPUs; i++) {
-      cluster.fork();
+      cluster.fork({
+        CLUSTER_PORT: port,
+      });
     }
 
     cluster.on('exit', (worker, code, signal) => {
@@ -105,11 +107,15 @@ function startServer(port) {
 }
 
 const server = net.createServer();
-server.listen(0, () => {
-  const address = server.address();
-  console.log('using port =>', address.port);
-  server.close();
-  setTimeout(() => {
-    startServer(address.port);
-  }, 100);
-});
+if (cluster.isMaster) {
+  server.listen(0, () => {
+    const address = server.address();
+    console.log('using port =>', address.port);
+    server.close(() => {
+      startServer(address.port);
+    });
+  });
+} else {
+  console.log('child process using port =>', process.env.CLUSTER_PORT);
+  startServer(+process.env.CLUSTER_PORT);
+}
