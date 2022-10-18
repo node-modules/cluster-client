@@ -1,4 +1,10 @@
 
+3.2.0 / 2022-10-18
+==================
+
+**features**
+  * [[`c9f389d`](http://github.com/node-modules/cluster-client/commit/c9f389d277abf75a5b3274626b326b6642b208f1)] - feat: impl subscribeTimeout (#56) (killa <<killa123@126.com>>)
+
 3.1.1 / 2022-06-22
 ==================
 
