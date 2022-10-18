@@ -64,7 +64,7 @@ class ClusterServer extends Base {
   /**
    * Manage all TCP Connections，assign them to proper channel
    *
-   * @constructor
+   * @class
    * @param {Object} options
    *  - {net.Server} server - the server
    *  - {Number} port - the port
