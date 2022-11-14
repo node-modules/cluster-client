@@ -1,4 +1,10 @@
 
+3.3.0 / 2022-11-14
+==================
+
+**features**
+  * [[`8ed198d`](http://github.com/node-modules/cluster-client/commit/8ed198db8d64eb76e018699093faed7c88f8c412)] - feat: add options isCheckHeartbeat of whether check heartbeat (#57) (sinkhaha <<1468709106@qq.com>>)
+
 3.2.0 / 2022-10-18
 ==================
 
