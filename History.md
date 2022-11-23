@@ -1,4 +1,10 @@
 
+3.3.1 / 2022-11-23
+==================
+
+**fixes**
+  * [[`9d9b965`](http://github.com/node-modules/cluster-client/commit/9d9b965a50e148bff78c8763bcd4dea7e2998e57)] - fix: should not emit timeout when has cache (#58) (killa <<killa123@126.com>>)
+
 3.3.0 / 2022-11-14
 ==================
 
