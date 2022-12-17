@@ -8,13 +8,11 @@
     "index.js"
   ],
   "scripts": {
-    "autod": "autod",
     "lint": "eslint . --ext .js",
     "cov": "egg-bin cov --timeout 20000",
     "test": "npm run lint && npm run test-local",
     "test-local": "egg-bin test",
-    "pkgfiles": "egg-bin pkgfiles --check",
-    "ci": "npm run autod -- --check && npm run pkgfiles && npm run lint && npm run cov",
+    "ci": "npm run lint && npm run cov",
     "contributors": "contributors -f plain -o AUTHORS"
   },
   "repository": {
@@ -47,26 +45,20 @@
   },
   "devDependencies": {
     "address": "^1.0.3",
-    "autod": "^3.0.1",
     "await-event": "^2.1.0",
     "coffee": "^5.2.1",
     "contributors": "^0.5.1",
     "detect-port": "^1.3.0",
-    "egg-bin": "^4.11.0",
-    "egg-ci": "^2.2.0",
-    "egg-mock": "^3.21.0",
-    "eslint": "^5.14.1",
-    "eslint-config-egg": "^7.1.0",
+    "egg-bin": "^5.6.1",
+    "egg-mock": "^5.4.0",
+    "eslint": "^8.30.0",
+    "eslint-config-egg": "^12.1.0",
     "mm": "^2.4.1",
     "mz-modules": "^2.1.0",
     "pedding": "^1.1.0",
-    "spy": "^1.0.0",
-    "webstorm-disable-index": "^1.2.0"
+    "spy": "^1.0.0"
   },
   "engines": {
     "node": ">=14.0.0"
-  },
-  "ci": {
-    "version": "14, 16, 18"
   }
 }
