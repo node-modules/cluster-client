@@ -1,6 +1,6 @@
 {
   "name": "cluster-client",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "description": "Sharing Connection among Multi-Process Nodejs",
   "main": "./index.js",
   "files": [
