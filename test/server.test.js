@@ -1,5 +1,3 @@
-'use strict';
-
 const mm = require('mm');
 const path = require('path');
 const coffee = require('coffee');
@@ -30,5 +28,23 @@ describe('test/server.test.js', () => {
     const server2 = await ClusterServer.create('previous-closed', 10002);
     assert(server2);
     await ClusterServer.close('previous-closed', server1);
+  });
+
+  it('should throw error when port is not a number', async function() {
+    await assert.rejects(async () => {
+      await ClusterServer.create('same-name', undefined);
+    }, /port should be a number, but got undefined/);
+    await assert.rejects(async () => {
+      await ClusterServer.create('same-name', null);
+    }, /port should be a number, but got null/);
+    await assert.rejects(async () => {
+      await ClusterServer.create('same-name');
+    }, /port should be a number, but got undefined/);
+    await assert.rejects(async () => {
+      await ClusterServer.create('same-name', 'foo');
+    }, /port should be a number, but got "foo"/);
+    await assert.rejects(async () => {
+      await ClusterServer.create('same-name', '0');
+    }, /port should be a number, but got "0"/);
   });
 });
