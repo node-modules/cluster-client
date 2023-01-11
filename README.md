@@ -2,20 +2,15 @@
 Sharing Connection among Multi-Process Nodejs
 
 [![NPM version][npm-image]][npm-url]
-[![build status][travis-image]][travis-url]
+[![CI](https://github.com/node-modules/cluster-client/actions/workflows/nodejs.yml/badge.svg)](https://github.com/node-modules/cluster-client/actions/workflows/nodejs.yml)
 [![Test coverage][codecov-image]][codecov-url]
-[![David deps][david-image]][david-url]
 [![Known Vulnerabilities][snyk-image]][snyk-url]
 [![npm download][download-image]][download-url]
 
 [npm-image]: https://img.shields.io/npm/v/cluster-client.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/cluster-client
-[travis-image]: https://img.shields.io/travis/node-modules/cluster-client.svg?style=flat-square
-[travis-url]: https://travis-ci.org/node-modules/cluster-client
 [codecov-image]: https://codecov.io/gh/node-modules/cluster-client/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/node-modules/cluster-client
-[david-image]: https://img.shields.io/david/node-modules/cluster-client.svg?style=flat-square
-[david-url]: https://david-dm.org/node-modules/cluster-client
 [snyk-image]: https://snyk.io/test/npm/cluster-client/badge.svg?style=flat-square
 [snyk-url]: https://snyk.io/test/npm/cluster-client
 [download-image]: https://img.shields.io/npm/dm/cluster-client.svg?style=flat-square
