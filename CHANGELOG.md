@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.1](https://github.com/node-modules/cluster-client/compare/v3.4.0...v3.4.1) (2023-06-20)
+
+
+### Bug Fixes
+
+* avoid serialize-json encoder error ([#63](https://github.com/node-modules/cluster-client/issues/63)) ([73c44d2](https://github.com/node-modules/cluster-client/commit/73c44d235c3bc6015263c98a4c5bf961af08cb55))
+
 ## [3.4.0](https://github.com/node-modules/cluster-client/compare/v3.3.3...v3.4.0) (2023-01-11)
 
 
