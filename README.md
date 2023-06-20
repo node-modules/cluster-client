@@ -1,4 +1,5 @@
 # cluster-client
+
 Sharing Connection among Multi-Process Nodejs
 
 [![NPM version][npm-image]][npm-url]
@@ -31,6 +32,7 @@ This module is designed to share connections among multi-process Nodejs.
 ## Diagram
 
 normal (without using cluster client)
+
 ```js
 +--------+   +--------+
 | Client |   | Client |   ...
@@ -46,6 +48,7 @@ normal (without using cluster client)
 ```
 
 using cluster-client
+
 ```js
              +-------+
              | start |
@@ -75,6 +78,7 @@ win /   +------------------+  \ lose
 ## Protocol
 
 - Packet structure
+
 ```js
  0       1       2               4                                                              12
  +-------+-------+---------------+---------------------------------------------------------------+
@@ -87,6 +91,7 @@ win /   +------------------+  \ lose
  |                                          ...                                                  |
  +-----------------------------------------------------------------------------------------------+
 ```
+
 - Protocol Type
   - Register Channel
   - Subscribe/Publish
@@ -115,7 +120,7 @@ win /   +------------------+  \ lose
 ## Install
 
 ```bash
-$ npm install cluster-client --save
+npm install cluster-client --save
 ```
 
 Node.js >= 6.0.0 required
@@ -211,13 +216,17 @@ co(function*() {
 ## Best Practice
 
 1. DataClient
-  - Only provider data API, interact with server and maintain persistent connections etc.
-  - No need to concern `cluster` issue
-2. APIClient
-  - Using `cluster-client` to wrap DataClient
-  - Put your bussiness logic here
 
-**DataClient**
+- Only provider data API, interact with server and maintain persistent connections etc.
+- No need to concern `cluster` issue
+
+1. APIClient
+
+- Using `cluster-client` to wrap DataClient
+- Put your bussiness logic here
+
+### DataClient
+
 ```js
 const Base = require('sdk-base');
 
@@ -241,7 +250,8 @@ class DataClient extends Base {
 }
 ```
 
-**APIClient**
+### APIClient
+
 ```js
 const DataClient = require('./your-data-client');
 const { APIClientBase } = require('cluster-client');
