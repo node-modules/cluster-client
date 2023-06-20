@@ -1,4 +1,5 @@
 # cluster-client
+
 Sharing Connection among Multi-Process Nodejs
 
 [![NPM version][npm-image]][npm-url]
@@ -31,6 +32,7 @@ This module is designed to share connections among multi-process Nodejs.
 ## Diagram
 
 normal (without using cluster client)
+
 ```js
 +--------+   +--------+
 | Client |   | Client |   ...
@@ -46,6 +48,7 @@ normal (without using cluster client)
 ```
 
 using cluster-client
+
 ```js
              +-------+
              | start |
@@ -75,6 +78,7 @@ win /   +------------------+  \ lose
 ## Protocol
 
 - Packet structure
+
 ```js
  0       1       2               4                                                              12
  +-------+-------+---------------+---------------------------------------------------------------+
@@ -87,6 +91,7 @@ win /   +------------------+  \ lose
  |                                          ...                                                  |
  +-----------------------------------------------------------------------------------------------+
 ```
+
 - Protocol Type
   - Register Channel
   - Subscribe/Publish
@@ -115,7 +120,7 @@ win /   +------------------+  \ lose
 ## Install
 
 ```bash
-$ npm install cluster-client --save
+npm install cluster-client --save
 ```
 
 Node.js >= 6.0.0 required
@@ -211,13 +216,17 @@ co(function*() {
 ## Best Practice
 
 1. DataClient
-  - Only provider data API, interact with server and maintain persistent connections etc.
-  - No need to concern `cluster` issue
-2. APIClient
-  - Using `cluster-client` to wrap DataClient
-  - Put your bussiness logic here
 
-**DataClient**
+- Only provider data API, interact with server and maintain persistent connections etc.
+- No need to concern `cluster` issue
+
+1. APIClient
+
+- Using `cluster-client` to wrap DataClient
+- Put your bussiness logic here
+
+### DataClient
+
 ```js
 const Base = require('sdk-base');
 
@@ -241,7 +250,8 @@ class DataClient extends Base {
 }
 ```
 
-**APIClient**
+### APIClient
+
 ```js
 const DataClient = require('./your-data-client');
 const { APIClientBase } = require('cluster-client');
@@ -295,3 +305,15 @@ class APIClient extends APIClientBase {
 For more information, you can refer to the [discussion](https://github.com/eggjs/egg/issues/322)
 
 [MIT](LICENSE)
+
+<!-- GITCONTRIBUTOR_START -->
+
+## Contributors
+
+|[<img src="https://avatars.githubusercontent.com/u/1207064?v=4" width="100px;"/><br/><sub><b>gxcsoccer</b></sub>](https://github.com/gxcsoccer)<br/>|[<img src="https://avatars.githubusercontent.com/u/156269?v=4" width="100px;"/><br/><sub><b>fengmk2</b></sub>](https://github.com/fengmk2)<br/>|[<img src="https://avatars.githubusercontent.com/u/456108?v=4" width="100px;"/><br/><sub><b>shaoshuai0102</b></sub>](https://github.com/shaoshuai0102)<br/>|[<img src="https://avatars.githubusercontent.com/u/6897780?v=4" width="100px;"/><br/><sub><b>killagu</b></sub>](https://github.com/killagu)<br/>|[<img src="https://avatars.githubusercontent.com/u/32174276?v=4" width="100px;"/><br/><sub><b>semantic-release-bot</b></sub>](https://github.com/semantic-release-bot)<br/>|[<img src="https://avatars.githubusercontent.com/u/227713?v=4" width="100px;"/><br/><sub><b>atian25</b></sub>](https://github.com/atian25)<br/>|
+| :---: | :---: | :---: | :---: | :---: | :---: |
+[<img src="https://avatars.githubusercontent.com/u/546535?v=4" width="100px;"/><br/><sub><b>leoner</b></sub>](https://github.com/leoner)<br/>|[<img src="https://avatars.githubusercontent.com/u/2160731?v=4" width="100px;"/><br/><sub><b>mansonchor</b></sub>](https://github.com/mansonchor)<br/>|[<img src="https://avatars.githubusercontent.com/u/19849579?v=4" width="100px;"/><br/><sub><b>sinkhaha</b></sub>](https://github.com/sinkhaha)<br/>|[<img src="https://avatars.githubusercontent.com/u/6457450?v=4" width="100px;"/><br/><sub><b>limitMe</b></sub>](https://github.com/limitMe)<br/>
+
+This project follows the git-contributor [spec](https://github.com/xudafeng/git-contributor), auto updated at `Tue Jun 20 2023 12:29:14 GMT+0800`.
+
+<!-- GITCONTRIBUTOR_END -->

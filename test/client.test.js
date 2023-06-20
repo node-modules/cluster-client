@@ -1,5 +1,3 @@
-'use strict';
-
 const co = require('co');
 const mm = require('mm');
 const net = require('net');
@@ -7,7 +5,7 @@ const Base = require('sdk-base');
 const is = require('is-type-of');
 const assert = require('assert');
 const symbols = require('../lib/symbol');
-const sleep = require('mz-modules/sleep');
+const { sleep } = require('../lib/utils');
 const EventEmitter = require('events').EventEmitter;
 const APIClientBase = require('..').APIClientBase;
 
@@ -179,14 +177,16 @@ describe('test/client.test.js', () => {
     'cluster',
     'single',
   ].forEach(scene => {
-    describe(scene, () => {
+    describe(`ClusterClient on scene: ${scene}`, () => {
       before(() => {
+        version = 0;
+      });
+      beforeEach(() => {
         if (scene === 'single') {
           mm(process.env, 'NODE_CLUSTER_CLIENT_SINGLE_MODE', '1');
         }
-        version = 0;
       });
-      after(mm.restore);
+      afterEach(mm.restore);
       it('should work ok', async function() {
         const client_1 = new ClusterClient();
         const client_2 = new ClusterClient();
@@ -359,8 +359,8 @@ describe('test/client.test.js', () => {
         const client_2 = new ClusterClient();
         await client_2.ready();
 
-        assert(client_1.isClusterClientLeader === true);
-        assert(client_2.isClusterClientLeader === (scene === 'single'));
+        assert.equal(client_1.isClusterClientLeader, true);
+        assert.equal(client_2.isClusterClientLeader, scene === 'single');
 
         await client_1.close();
         await client_2.close();
@@ -371,9 +371,9 @@ describe('test/client.test.js', () => {
         let client_2 = new APIClient2();
 
         let v = await client_1.getVersion();
-        assert(v === 1);
+        assert.equal(v, 1);
         v = await client_2.getVersion();
-        assert(v === 1);
+        assert.equal(v, 1);
 
         await Promise.all([
           client_1.close(),
@@ -384,27 +384,27 @@ describe('test/client.test.js', () => {
         client_2 = new APIClient2();
 
         v = await client_1.getVersion();
-        assert(v === 2);
+        assert.equal(v, 2);
         v = await client_2.getVersion();
-        assert(v === 2);
+        assert.equal(v, 2);
 
         v = await client_1.echo('hello');
-        assert(v === 'hello');
+        assert.equal(v, 'hello');
         v = await client_2.echo('hello');
-        assert(v === 'hello');
+        assert.equal(v, 'hello');
 
         try {
           await client_1.getError();
           assert(false);
         } catch (err) {
-          assert(err.message === 'mock error');
+          assert.equal(err.message, 'mock error');
         }
 
         try {
           await client_2.getError();
           assert(false);
         } catch (err) {
-          assert(err.message === 'mock error');
+          assert.equal(err.message, 'mock error');
         }
 
         await Promise.all([
