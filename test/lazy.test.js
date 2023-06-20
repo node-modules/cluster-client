@@ -1,11 +1,9 @@
-'use strict';
-
 const net = require('net');
 const mm = require('egg-mock');
 const assert = require('assert');
 const Base = require('sdk-base');
 const originCluster = require('../');
-const sleep = require('mz-modules/sleep');
+const { sleep } = require('../lib/utils');
 const APIClient = require('./supports/api_client');
 
 describe('test/lazy.test.js', () => {

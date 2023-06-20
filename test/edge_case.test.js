@@ -1,9 +1,7 @@
-'use strict';
-
 const mm = require('mm');
 const assert = require('assert');
 const detect = require('detect-port');
-const sleep = require('mz-modules/sleep');
+const { sleep } = require('../lib/utils');
 const ApiClient = require('./supports/case_1/api_client');
 
 describe('test/edge_case.test.js', () => {

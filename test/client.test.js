@@ -1,5 +1,3 @@
-'use strict';
-
 const co = require('co');
 const mm = require('mm');
 const net = require('net');
@@ -7,7 +5,7 @@ const Base = require('sdk-base');
 const is = require('is-type-of');
 const assert = require('assert');
 const symbols = require('../lib/symbol');
-const sleep = require('mz-modules/sleep');
+const { sleep } = require('../lib/utils');
 const EventEmitter = require('events').EventEmitter;
 const APIClientBase = require('..').APIClientBase;
 

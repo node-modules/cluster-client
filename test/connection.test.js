@@ -1,9 +1,7 @@
-'use strict';
-
 const net = require('net');
 const assert = require('assert');
 const awaitEvent = require('await-event');
-const sleep = require('mz-modules/sleep');
+const { sleep } = require('../lib/utils');
 const Connection = require('../lib/connection');
 const Request = require('../lib/protocol/request');
 const transcode = require('../lib/default_transcode');

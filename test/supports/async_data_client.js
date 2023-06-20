@@ -1,7 +1,5 @@
-'use strict';
-
 const Base = require('sdk-base');
-const sleep = require('mz-modules/sleep');
+const { sleep } = require('../../lib/utils');
 
 class DataClient extends Base {
   constructor() {

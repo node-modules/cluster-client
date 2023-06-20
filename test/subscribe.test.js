@@ -1,7 +1,5 @@
-'use strict';
-
 const assert = require('assert');
-const sleep = require('mz-modules/sleep');
+const { sleep } = require('../lib/utils');
 const ApiClient = require('./supports/sub_timeout/api_client');
 
 describe('test/subscrib.test.js', () => {
