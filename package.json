@@ -37,7 +37,7 @@
     "long": "^4.0.0",
     "sdk-base": "^3.5.1",
     "serialize-json": "^1.0.3",
-    "tcp-base": "^3.1.0",
+    "tcp-base": "^3.2.0",
     "utility": "^1.15.0"
   },
   "devDependencies": {

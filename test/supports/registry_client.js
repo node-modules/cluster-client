@@ -1,8 +1,6 @@
-'use strict';
-
 const dgram = require('dgram');
+const { format: URLFormat } = require('url');
 const Base = require('sdk-base');
-const URL = require('url');
 
 const pid = process.pid;
 const localIp = require('address').ip();
@@ -25,21 +23,20 @@ class RegistryClient extends Base {
     this._socket.on('error', err => this.emit('error', err));
     this._socket.on('message', buf => {
       const msg = buf.toString();
-      // console.log(`socket got: ${msg} from ${rinfo.address}:${rinfo.port}`);
 
       if (msg.startsWith('register ')) {
         const url = msg.substring(9);
-        const parsed = URL.parse(url, true);
-        const key = parsed.query.interface;
+        const parsed = new URL(url);
+        const key = parsed.searchParams.get('interface');
         if (this._subscribed.has(key)) {
           const subData = this._subscribed.get(key);
-          const category = parsed.query.category || 'providers';
+          const category = parsed.searchParams.get('category') || 'providers';
           // const enabled = parsed.query.enabled || true;
 
           if (subData.urlObj.query.category.split(',').indexOf(category) >= 0) {
             subData.value = subData.value || new Map();
             if (!subData.value.has(parsed.host)) {
-              subData.value.set(parsed.host, parsed);
+              subData.value.set(parsed.host, { host: parsed.host });
               this.emit(key, Array.from(subData.value.values()));
             }
           }
@@ -48,17 +45,17 @@ class RegistryClient extends Base {
         // TODO:
       } else if (msg.startsWith('subscribe ')) {
         const consumerUrl = msg.substring(10);
-        const parsed = URL.parse(consumerUrl, true);
-        const key = parsed.query.interface;
+        const parsed = new URL(consumerUrl);
+        const key = parsed.searchParams.get('interface');
 
         if (this._registered.has(key)) {
           const urls = this._registered.get(key);
 
           for (const url of urls) {
-            const obj = URL.parse(url, true);
-            const category = obj.query.category || 'providers';
+            const obj = new URL(url);
+            const category = obj.searchParams.get('category') || 'providers';
             // const enabled = obj.query.enabled || true;
-            if (parsed.query.category.split(',').indexOf(category) >= 0) {
+            if (parsed.searchParams.get('category').split(',').indexOf(category) >= 0) {
               this._broadcast(`register ${url}`);
             }
           }
@@ -137,7 +134,7 @@ class RegistryClient extends Base {
         },
         pathname: `/${key}`,
       };
-      this._broadcast(`register ${URL.format(urlObj)}`);
+      this._broadcast(`register ${URLFormat(urlObj)}`);
 
       urlObj.query = {
         application: 'demo-consumer',
@@ -151,7 +148,7 @@ class RegistryClient extends Base {
         side: 'consumer',
         timestamp: Date.now(),
       };
-      this._broadcast(`subscribe ${URL.format(urlObj)}`);
+      this._broadcast(`subscribe ${URLFormat(urlObj)}`);
 
       this._subscribed.set(key, {
         urlObj,
@@ -172,8 +169,8 @@ class RegistryClient extends Base {
   publish(reg) {
     // register dubbo://30.20.78.300:20880/com.alibaba.dubbo.demo.DemoService?anyhost=true&application=demo-provider&dubbo=2.0.0&generic=false&interface=com.alibaba.dubbo.demo.DemoService&loadbalance=roundrobin&methods=sayHello&owner=william&pid=81281&side=provider&timestamp=1481613276143
     this._broadcast(`register ${reg.publishData}`);
-    const parsed = URL.parse(reg.publishData, true);
-    const key = parsed.query.interface;
+    const urlObject = new URL(reg.publishData);
+    const key = urlObject.searchParams.get('interface');
 
     if (this._registered.has(key)) {
       this._registered.get(key).push(reg.publishData);
@@ -181,13 +178,12 @@ class RegistryClient extends Base {
       this._registered.set(key, [ reg.publishData ]);
     }
 
-    parsed.protocol = 'provider:';
-    parsed.search = null;
-    parsed.query = Object.assign({}, parsed.query, {
-      category: 'configurators',
-      check: false,
-    });
-    const providerUrl = URL.format(parsed);
+    urlObject.protocol = 'provider:';
+    urlObject.search = null;
+    urlObject.searchParams.set('category', 'configurators');
+    urlObject.searchParams.set('check', 'fase');
+    const providerUrl = urlObject.toString();
+    console.log(providerUrl);
     this._broadcast(`subscribe ${providerUrl}`);
   }
 
