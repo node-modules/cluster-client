@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.0](https://github.com/node-modules/cluster-client/compare/v3.4.1...v3.5.0) (2023-08-30)
+
+
+### Features
+
+* add tips for tcp-base ([#64](https://github.com/node-modules/cluster-client/issues/64)) ([f3068e0](https://github.com/node-modules/cluster-client/commit/f3068e0b6900b595e91a630e0f4e3bea7e84c3de))
+
 ## [3.4.1](https://github.com/node-modules/cluster-client/compare/v3.4.0...v3.4.1) (2023-06-20)
 
 
