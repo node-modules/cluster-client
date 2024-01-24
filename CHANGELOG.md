@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.0](https://github.com/node-modules/cluster-client/compare/v3.5.0...v3.6.0) (2024-01-24)
+
+
+### Features
+
+* set ClusterServer default maximum listeners up to 20 ([#66](https://github.com/node-modules/cluster-client/issues/66)) ([384b7b4](https://github.com/node-modules/cluster-client/commit/384b7b48c9a79203a1b7639fa4b7475434cfa8b4))
+
 ## [3.5.0](https://github.com/node-modules/cluster-client/compare/v3.4.1...v3.5.0) (2023-08-30)
 
 
