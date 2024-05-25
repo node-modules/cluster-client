@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.7.0](https://github.com/node-modules/cluster-client/compare/v3.6.0...v3.7.0) (2024-05-25)
+
+
+### Features
+
+* use egg-logger@3, sdk-base@4, utility@2 ([#67](https://github.com/node-modules/cluster-client/issues/67)) ([71dff9a](https://github.com/node-modules/cluster-client/commit/71dff9aec7b11be3037181c54518a31701f332d4))
+
 ## [3.6.0](https://github.com/node-modules/cluster-client/compare/v3.5.0...v3.6.0) (2024-01-24)
 
 
