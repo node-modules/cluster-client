@@ -31,14 +31,14 @@
   "dependencies": {
     "byte": "^2.0.0",
     "co": "^4.6.0",
-    "egg-logger": "^2.3.2",
-    "is-type-of": "^1.2.1",
+    "egg-logger": "^3.5.0",
+    "is-type-of": "^1.4.0",
     "json-stringify-safe": "^5.0.1",
     "long": "^4.0.0",
-    "sdk-base": "^3.5.1",
+    "sdk-base": "^4.2.1",
     "serialize-json": "^1.0.3",
     "tcp-base": "^3.2.0",
-    "utility": "^1.15.0"
+    "utility": "^2.1.0"
   },
   "devDependencies": {
     "address": "^1.0.3",
