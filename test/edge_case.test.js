@@ -1,6 +1,6 @@
 const mm = require('mm');
 const assert = require('assert');
-const detect = require('detect-port');
+const { detectPort: detect } = require('detect-port');
 const { sleep } = require('../lib/utils');
 const ApiClient = require('./supports/case_1/api_client');
 
