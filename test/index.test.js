@@ -173,6 +173,9 @@ describe('test/index.test.js', () => {
               this.ready(true);
             }
 
+            // async close() {
+            //   this.closed = true;
+            // }
             * close() {
               this.closed = true;
             }
@@ -183,7 +186,7 @@ describe('test/index.test.js', () => {
           // make sure real client is closed;
           // assert has problem with global scope virable
           if (anotherleader[symbols.innerClient]._realClient.closed !== true) {
-            throw new Error();
+            throw new Error('close not work');
           }
         });
 
